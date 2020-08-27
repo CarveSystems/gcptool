@@ -1,11 +1,7 @@
-from .compute import compute
-from .regions import regions
-
 from typing import List, Any
 
-# pylint: disable=no-member
-address_api = compute.addresses()
-
+from . import api
+from gcptool.inventory.cache import Cache
 
 def addresses(project: str) -> List[object]:
     all_addresses = []

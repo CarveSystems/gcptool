@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any, Optional
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
@@ -15,9 +15,12 @@ class TLSEnforcement(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("sql", "tls", ["roles/iam.securityReviewer"])
+        return ScanMetadata("sql", "tls",
+                            "Cloud SQL instances do not require TLS",
+                            Severity.LOW,
+                            ["roles/iam.securityReviewer"])
 
-    def run(self, context: Context) -> List[Finding]:
+    def run(self, context: Context) -> Optional[Finding]:
         vulnerable_by_project: Dict[str, List[instances.Instance]] = {}
 
         for project in context.projects:
@@ -46,13 +49,6 @@ class TLSEnforcement(Scan):
                 vulnerable_by_project[project.id] = open_instances
 
         if len(vulnerable_by_project):
-            return [
-                Finding(
-                    f"{self.service}_{self.name}.md",
-                    "Cloud SQL instances do not require TLS",
-                    Severity.LOW,
-                    vulnerable_projects=vulnerable_by_project,
-                )
-            ]
-
-        return []
+            return finding(vulnerable_projects=vulnerable_by_project)
+   
+        return None

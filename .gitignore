@@ -29,3 +29,5 @@ MANIFEST
 dmypy.json
 
 .vscode/
+*~
+gcptool_cache.json

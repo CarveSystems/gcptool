@@ -1,16 +1,6 @@
 from typing import List
 
-from googleapiclient.discovery import build
-
-from gcptool.creds import credentials
-
-from . import zones
-
-compute = build("compute", "v1", credentials=credentials)
-
-# pylint: disable=no-member
-instance_api = compute.instances()
-
+from . import api
 
 def instances(project: str) -> List[object]:
     project_instances: List[object] = []

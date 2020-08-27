@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any, Optional
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
@@ -8,16 +8,19 @@ from gcptool.inventory.storage import buckets
 
 
 @scan
-class PubliclyAccessibleBuckets(Scan):
+class PubliclyWriteableBuckets(Scan):
     """
     This scan returns a list of buckets that have been assigned public IAM roles or ACLs.
     """
 
     @staticmethod
     def meta():
-        return ScanMetadata("gcs", "public-buckets", ["roles/iam.securityReviewer"])
+        return ScanMetadata("gcs", "write_buckets",
+                            "Projects Have World-Writeable Storage Buckets",
+                            Severity.HIGH,
+                            ["roles/iam.securityReviewer"])
 
-    def run(self, context: Context) -> List[Finding]:
+    def run(self, context: Context) -> Optional[Finding]:
         # TODO - make Cloud Storage respect the cache/context
         project = context.projects[0]
 
@@ -91,21 +94,30 @@ class PubliclyAccessibleBuckets(Scan):
             if readable:
                 readable_buckets.append(bucket.id)
 
-        if len(writable_buckets) or len(readable_buckets):
-            if len(writable_buckets):
-                title = "World-writable buckets"
-                severity = Severity.HIGH
-            else:
-                title = "World-readable buckets"
-                severity = Severity.LOW
-            return [
-                Finding(
-                    "public_buckets.md",
-                    title,
-                    severity,
+        if len(writable_buckets):
+            return finding(
                     readable_buckets=readable_buckets,
                     writable_buckets=writable_buckets,
                 )
-            ]
 
-        return []
+        return None
+
+
+@scan
+class PubliclyReadableBuckets(Scan):
+    """
+    This scan returns a list of buckets that have been assigned public IAM roles or ACLs. It duplicates 'PubliclyWriteableBuckets' if the buckets are also writeable.
+    """
+
+    @staticmethod
+    def meta():
+        return ScanMetadata("gcs", "read_buckets",
+                            "Projects Have World-Readable Storage Buckets",
+                            Severity.LOW,
+                            ["roles/iam.securityReviewer"])
+
+    def run(self, context: Context) -> Optional[Finding]:
+        # TODO
+        # - this is just a subset of the above scan, so can copy+paste here
+        # - or better yet, abstract out the common bits
+        return None

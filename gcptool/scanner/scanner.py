@@ -24,10 +24,12 @@ class Scanner:
                 
                 print(f"Running scanner {meta.name} for {meta.service}...")
                 scan = scanner()
-                findings = scan.run(context)
-                
-                print(f"Complete. There are {len(findings)} potential findings.")
-                all_findings.extend(findings)
+                finding = scan.run(context)
+                if finding:
+                    print(f"Complete. There is a potential finding.")
+                    all_findings.extend(findings)
+                else:
+                    print(f"Complete.")
 
                 print(f"Writing data to cache...")
                 context.cache.save()
