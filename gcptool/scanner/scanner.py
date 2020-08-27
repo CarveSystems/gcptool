@@ -1,4 +1,5 @@
 from typing import Any, List, Set
+import google.api_core.exceptions as gcperrors
 
 import gcptool.scanner.scans
 from gcptool.inventory import iam
@@ -18,17 +19,25 @@ class Scanner:
         all_findings: List[Finding] = []
 
         for scanner in all_scans:
-            meta = scanner.meta()
+            try:
+                meta = scanner.meta()
+                
+                print(f"Running scanner {meta.name} for {meta.service}...")
+                scan = scanner()
+                findings = scan.run(context)
+                
+                print(f"Complete. There are {len(findings)} potential findings.")
+                all_findings.extend(findings)
 
-            print(f"Running scanner {meta.name} for {meta.service}")
-
-            scan = scanner()
-            findings = scan.run(context)
-
-            all_findings.extend(findings)
-
-        print(f"Writing data to cache...")
-        context.cache.save()
+                print(f"Writing data to cache...")
+                context.cache.save()
+                continue
+            
+            except gcperrors.Forbidden as e:
+                print(f"Insufficient permissions to complete this scan: {str(e)}")
+                
+            print(f"Aborted.")
+                
 
         return all_findings
 

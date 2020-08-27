@@ -15,8 +15,7 @@ class PubliclyAccessibleBuckets(Scan):
 
     @staticmethod
     def meta():
-        # TODO - note the permissions for this
-        return ScanMetadata("gcs", "public-buckets", [])
+        return ScanMetadata("gcs", "public-buckets", ["roles/iam.securityReviewer"])
 
     def run(self, context: Context) -> List[Finding]:
         # TODO - make Cloud Storage respect the cache/context

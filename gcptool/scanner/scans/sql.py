@@ -15,7 +15,7 @@ class TLSEnforcement(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("sql", "tls", ["cloudsql.instances.list"])
+        return ScanMetadata("sql", "tls", ["roles/iam.securityReviewer"])
 
     def run(self, context: Context) -> List[Finding]:
         vulnerable_by_project: Dict[str, List[instances.Instance]] = {}
@@ -48,7 +48,7 @@ class TLSEnforcement(Scan):
         if len(vulnerable_by_project):
             return [
                 Finding(
-                    "sql_tls.md",
+                    f"{self.service}_{self.name}.md",
                     "Cloud SQL instances do not require TLS",
                     Severity.LOW,
                     vulnerable_projects=vulnerable_by_project,

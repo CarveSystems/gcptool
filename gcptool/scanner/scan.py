@@ -16,6 +16,9 @@ class ScanMetadata:
     name: str
 
     # A list of IAM permissions required to perform this scan.
+    # - use "roles/iam.securityReviewer" by default
+    # - add other permissions as needed
+    # - if "roles/iam.securityReviewer" is too broad, use the specific permission(s) instead
     permissions: List[str]
 
 
