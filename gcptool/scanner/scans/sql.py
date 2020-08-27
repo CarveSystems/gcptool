@@ -1,9 +1,11 @@
-from typing import List, Any
+from typing import List, Dict, Any
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
+from gcptool.scanner.context import Context
 
 from gcptool.inventory.sql import instances
+from gcptool.inventory.resourcemanager.projects import Project
 
 
 @scan
@@ -16,35 +18,41 @@ class TLSEnforcement(Scan):
     def meta():
         return ScanMetadata("sql", "tls", ["cloudsql.instances.list"])
 
-    def run(self, project: str) -> List[Finding]:
-        p = instances.all(project)
+    def run(self, context: Context) -> List[Finding]:
+        vulnerable_by_project: Dict[str, List[instances.Instance]] = {}
 
-        open_instances: List[instances.Instance] = []
+        for project in context.projects:
 
-        for instance in p:
+            p = instances.all(project.id, context.cache)
 
-            has_public_ip = False
-            for address in instance.ip_addresses:
-                if address.type == instances.SQLIPAddressType.PRIMARY:
-                    has_public_ip = True
+            open_instances: List[instances.Instance] = []
 
-            # We need to check if this is actually available over the internet.
-            # If there's an IP, but no authorized networks, then this instance isn't actually public.
-            # (Except for throug the Cloud SQL proxy, which always uses SSL.)
-            has_authorized_networks = len(instance.ip_configuration.authorized_networks) > 0
+            for instance in p:
+                has_public_ip = False
+                for address in instance.ip_addresses:
+                    if address.type == instances.SQLIPAddressType.PRIMARY:
+                        has_public_ip = True
 
-            requires_ssl = instance.ip_configuration.require_ssl
+                # We need to check if this is actually available over the internet.
+                # If there's an IP, but no authorized networks, then this instance isn't actually public.
+                # (Except for throug the Cloud SQL proxy, which always uses SSL.)
+                has_authorized_networks = len(instance.ip_configuration.authorized_networks) > 0
 
-            if has_public_ip and has_authorized_networks and not requires_ssl:
-                open_instances.append(instance)
+                requires_ssl = instance.ip_configuration.require_ssl
 
-        if len(open_instances):
+                if has_public_ip and has_authorized_networks and not requires_ssl:
+                    open_instances.append(instance)
+
+            if len(open_instances) > 0:
+                vulnerable_by_project[project.id] = open_instances
+
+        if len(vulnerable_by_project):
             return [
                 Finding(
                     "sql_tls.md",
                     "Cloud SQL instances do not require TLS",
                     Severity.LOW,
-                    instances=open_instances,
+                    vulnerable_projects=vulnerable_by_project,
                 )
             ]
 

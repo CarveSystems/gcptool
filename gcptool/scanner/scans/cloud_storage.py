@@ -2,6 +2,7 @@ from typing import List, Any
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
+from gcptool.scanner.context import Context
 
 from gcptool.inventory.storage import buckets
 
@@ -17,8 +18,11 @@ class PubliclyAccessibleBuckets(Scan):
         # TODO - note the permissions for this
         return ScanMetadata("gcs", "public-buckets", [])
 
-    def run(self, project: str) -> List[Finding]:
-        all_buckets = buckets.all(project)
+    def run(self, context: Context) -> List[Finding]:
+        # TODO - make Cloud Storage respect the cache/context
+        project = context.projects[0]
+
+        all_buckets = buckets.all(project.id)
 
         readable_buckets: List[str] = []
         writable_buckets: List[str] = []

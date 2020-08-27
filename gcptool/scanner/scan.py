@@ -5,6 +5,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 from .finding import Finding
+from .context import Context
 
 
 @dataclass
@@ -29,7 +30,7 @@ class Scan(metaclass=ABCMeta):
         raise NotImplementedError("Scans must implement this method")
 
     @abstractmethod
-    def run(self, project) -> List[Finding]:
+    def run(self, context: Context) -> List[Finding]:
         raise NotImplementedError("Scans must implement this method")
 
 

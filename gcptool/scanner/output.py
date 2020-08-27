@@ -17,5 +17,7 @@ def write_findings(output_folder: Path, project: str, findings: List[Finding]) -
             project=project, finding_title=finding.title, severity=sev_name, **finding.vars
         )
 
-        with open(str(output_folder / finding.template), "w") as f:
+        filename = "gcp_" + finding.template
+
+        with open(str(output_folder / filename), "w") as f:
             f.write(content)

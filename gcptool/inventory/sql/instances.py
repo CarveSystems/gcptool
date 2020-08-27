@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Any, List, Optional
 
 from . import api
+from gcptool.inventory.cache import Cache
 
 
 class State(enum.Enum):
@@ -78,12 +79,20 @@ def _parse(raw: Any) -> Instance:
     return instance
 
 
-def all(project: str) -> List[Instance]:
-    response = api.instances.list(project=project).execute()
+def all(project: str, cache: Cache) -> List[Instance]:
+    cached_data = cache.get("sql", "instances", project)
+
+    if cached_data is None:
+        print(f"No SQL instance data for {project} in cache. Fetching from API.")
+        data = api.instances.list(project=project).execute().get("items", [])
+        cache.store("sql", "instances", project, data)
+    else:
+        print(f"Using cached SQL instance data for {project}")
+        data = cached_data
 
     instances: List[Instance] = []
 
-    for instance in response.get("items", []):
+    for instance in data:
         instance = _parse(instance)
         instances.append(instance)
 
