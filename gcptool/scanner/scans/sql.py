@@ -1,11 +1,10 @@
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
 from gcptool.scanner.context import Context
 
 from gcptool.inventory.sql import instances
-from gcptool.inventory.resourcemanager.projects import Project
 
 
 @scan

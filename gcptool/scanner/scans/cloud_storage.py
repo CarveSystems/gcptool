@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan

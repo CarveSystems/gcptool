@@ -2,6 +2,7 @@ import enum
 from dataclasses import dataclass
 from typing import Any, List, NewType, Optional
 
+from ..cache import Cache, with_cache
 from . import api
 
 # These classes are used to assist with deserialization of GCP project resources.
@@ -61,9 +62,15 @@ def all() -> List[Project]:
     return [_parse(project) for project in response.get("projects", [])]
 
 
-def get(id: str) -> Project:
-    response = api.projects.get(projectId=id).execute()
-    return _parse(response)
+@with_cache("resourcemanager", "project")
+def __get(project_id: str) -> Any:
+    return api.projects.get(projectId=project_id).execute()
+
+
+def get(cache: Cache, project_id: str) -> Project:
+    data = __get(cache, project_id)
+
+    return _parse(data)
 
 
 def _parse(raw: dict) -> Project:

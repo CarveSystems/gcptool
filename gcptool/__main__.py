@@ -1,10 +1,7 @@
 import argparse
 import os
 from pathlib import Path
-import sys
 
-from .inventory.compute.addresses import addresses
-from .inventory.compute.compute import instances
 from .inventory.resourcemanager import projects
 from .inventory.cache import Cache
 
@@ -13,8 +10,6 @@ from .scanner.context import Context
 from .scanner.finding import Severity
 from .scanner.output import write_findings
 
-from .creds import project as default_project
-
 
 def scan(args):
 
@@ -22,7 +17,7 @@ def scan(args):
     cache = Cache(args.cache)
 
     # Take the list of projects to scan from the command line as a comma-separated list of project IDs.
-    to_scan = [projects.get(project_id) for project_id in args.project.split(",")]
+    to_scan = [projects.get(cache, project_id) for project_id in args.project.split(",")]
 
     # Let's just make sure we're able to output first...
     out: Path = args.output
@@ -48,11 +43,11 @@ def scan(args):
         print("-" * 40)
 
     print(f"Writing findings to {args.output}...")
-    write_findings(out, project.id, findings)
+    write_findings(out, findings)
     print("Done!")
 
 
-def list_projects(args):
+def list_projects(_args):
     print("Listing of all projects.\n")
 
     for project in projects.all():

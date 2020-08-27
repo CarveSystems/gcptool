@@ -1,9 +1,11 @@
-from typing import List
+from typing import Any, List, Set
 
 import gcptool.scanner.scans
+from gcptool.inventory import iam
+
+from .context import Context
 from .finding import Finding
 from .scan import all_scans
-from .context import Context
 
 
 class Scanner:
@@ -29,3 +31,22 @@ class Scanner:
         context.cache.save()
 
         return all_findings
+
+    def check_permissions(self, context: Context) -> List[str]:
+        all_role_names: Set[str] = set()
+
+        for project in context.projects:
+            project_roles = iam.roles.grantable_roles(
+                f"//cloudresourcemanager.googleapis.com/projects/{project.id}", context.cache
+            )
+
+            for role in project_roles:
+                all_role_names.add(role.name)
+
+        roles: List[Any] = []
+        for name in all_role_names:
+            definition = iam.roles.get(name, context.cache)
+            roles.append(definition)
+
+        print(roles)
+        return []

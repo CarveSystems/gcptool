@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Callable
 from pathlib import Path
 
 import json
@@ -60,3 +60,27 @@ class Cache:
             service_data[resource] = resource_data
 
         resource_data[project] = data
+
+
+def with_cache(
+    service: str, resource: str
+) -> Callable[[Callable[[str], Any]], Callable[[Cache, str], Any]]:
+    """
+    A decorator to automagically add support for caching to "simple" listing API calls.
+    """
+
+    def decorator(func: Callable[[str], Any]) -> Callable[[Cache, str], Any]:
+        def wrapper_func(cache: Cache, item_id: str) -> Any:
+            cached_data = cache.get(service, resource, item_id)
+
+            if not cached_data:
+                data = func(item_id)
+                cache.store(service, resource, item_id, data)
+
+                return data
+            else:
+                return cached_data
+
+        return wrapper_func
+
+    return decorator
