@@ -18,7 +18,7 @@ class ScanMetadata:
     title: str
     # What is the severity of the finding?
     severity: Severity
-    
+
     # A list of IAM permissions required to perform this scan.
     # - use "roles/iam.securityReviewer" by default
     # - add other permissions as needed
@@ -33,8 +33,9 @@ class Scan(metaclass=ABCMeta):
 
     # wrapper around Finding() ctor; kwargs are passed on to markdown template
     def finding(self, **kwargs) -> Finding:
-        return Finding(f"{self.service}_{self.name}.md", self.title, self.severity, **kwargs)
-        
+        meta = self.meta()
+        return Finding(f"{meta.service}_{meta.name}.md", meta.title, meta.severity, **kwargs)
+
     @staticmethod
     @abstractmethod
     def meta() -> ScanMetadata:

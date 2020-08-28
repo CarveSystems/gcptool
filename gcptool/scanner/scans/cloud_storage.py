@@ -15,10 +15,13 @@ class PubliclyWriteableBuckets(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("gcs", "write_buckets",
-                            "Projects Have World-Writeable Storage Buckets",
-                            Severity.HIGH,
-                            ["roles/iam.securityReviewer"])
+        return ScanMetadata(
+            "gcs",
+            "write_buckets",
+            "Projects Have World-Writeable Storage Buckets",
+            Severity.HIGH,
+            ["roles/iam.securityReviewer"],
+        )
 
     def run(self, context: Context) -> Optional[Finding]:
         # TODO - make Cloud Storage respect the cache/context
@@ -95,10 +98,9 @@ class PubliclyWriteableBuckets(Scan):
                 readable_buckets.append(bucket.id)
 
         if len(writable_buckets):
-            return finding(
-                    readable_buckets=readable_buckets,
-                    writable_buckets=writable_buckets,
-                )
+            return self.finding(
+                readable_buckets=readable_buckets, writable_buckets=writable_buckets,
+            )
 
         return None
 
@@ -111,10 +113,13 @@ class PubliclyReadableBuckets(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("gcs", "read_buckets",
-                            "Projects Have World-Readable Storage Buckets",
-                            Severity.LOW,
-                            ["roles/iam.securityReviewer"])
+        return ScanMetadata(
+            "gcs",
+            "read_buckets",
+            "Projects Have World-Readable Storage Buckets",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"],
+        )
 
     def run(self, context: Context) -> Optional[Finding]:
         # TODO

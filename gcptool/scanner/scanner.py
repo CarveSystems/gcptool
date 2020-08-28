@@ -25,23 +25,23 @@ class Scanner:
         for scanner in all_scans:
             try:
                 meta = scanner.meta()
-                
+
                 print(f"Running scanner {meta.name} for {meta.service}...")
                 scan = scanner()
                 finding = scan.run(self.context)
                 if finding:
                     print(f"Complete. There is a potential finding.")
-                    all_findings.extend(findings)
+                    all_findings.append(finding)
                 else:
                     print(f"Complete.")
 
                 print(f"Writing data to cache...")
                 self.context.cache.save()
                 continue
-            
+
             except gcperrors.Forbidden as e:
                 print(f"Insufficient permissions to complete this scan: {str(e)}")
-                
+
             print(f"Aborted.")
 
         return all_findings
