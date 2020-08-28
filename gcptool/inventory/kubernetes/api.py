@@ -7,3 +7,6 @@ client = build("container", "v1", credentials=credentials)
 
 # pylint: disable=no-member
 clusters = client.projects().locations().clusters()
+
+# pylint: disable=no-member
+node_pools = clusters.nodePools()
