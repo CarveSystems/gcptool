@@ -1,20 +1,26 @@
-from typing import List, Any
+from typing import List
 
 from . import api
-from gcptool.inventory.cache import Cache
+from gcptool.inventory.cache import with_cache, Cache
 
-def addresses(project: str) -> List[object]:
-    all_addresses = []
+@with_cache("compute", "addresses")
+def __all(project_id: str):
+    addresses = {}
+    # TODO - we have no reference to the cache here, and so can't use
+    ##for region in regions.all(project_id, cache):
+    for region in api.regions.list(project=project_id).execute().get("items", []):
+        region_addresses = api.addresses.list(project=project_id, region=region["name"]).execute().get("items", [])
+        addresses[region["name"]] = region_addresses
 
-    r = regions(project)
+    return addresses
 
-    for region in r:
-        region_addresses = address_api.list(project=project, region=region).execute()
+# a flat list of all addresses in project, for all regions
+def all(project_id: str, cache: Cache) -> List[str]:
+    return [address for by_region in __all(cache, project_id).values() for address in by_region]
 
-        if "items" not in region_addresses:
-            continue
-
-        for address in region_addresses["items"]:
-            all_addresses.append(address)
-
-    return all_addresses
+# nested lists of all addresses in project, by region
+def by_region(project_id: str, cache: Cache) -> List[str]:
+    addresses = {}
+    for region,region_addresses in __all(cache, project_id).items():
+        addresses[region] = [address for address in region_addresses]
+    return addresses
