@@ -12,7 +12,6 @@ from .scanner.output import write_findings
 
 
 def scan(args):
-
     print(f"Using cache at {args.cache}...")
     cache = Cache(args.cache)
 
@@ -28,8 +27,8 @@ def scan(args):
 
     context = Context(to_scan, cache)
 
-    scanner = Scanner()
-    findings = scanner.scan(context)
+    scanner = Scanner(context)
+    findings = scanner.scan()
 
     num_high_findings = sum(1 for finding in findings if finding.severity >= Severity.HIGH)
 
@@ -45,6 +44,19 @@ def scan(args):
     print(f"Writing findings to {args.output}...")
     write_findings(out, findings)
     print("Done!")
+
+
+def permissions_check(args):
+    print(f"Using cache at {args.cache}...")
+    cache = Cache(args.cache)
+
+    # Take the list of projects to scan from the command line as a comma-separated list of project IDs.
+    to_scan = [projects.get(cache, project_id) for project_id in args.project.split(",")]
+
+    context = Context(to_scan, cache)
+    scanner = Scanner(context)
+
+    scanner.test_permissions()
 
 
 def list_projects(_args):
@@ -72,6 +84,18 @@ parser_scan.add_argument(
     default=Path(os.getcwd()) / "gcptool_cache.json",
 )
 parser_scan.set_defaults(func=scan)
+
+parser_check = subparsers.add_parser(
+    "check", help="Check to see if adequate permissions have been granted to run a scan."
+)
+parser_check.add_argument("project", help="Project to scan.")
+parser_check.add_argument(
+    "--cache",
+    help="File to write cached API data to.",
+    type=Path,
+    default=Path(os.getcwd()) / "gcptool_cache.json",
+)
+parser_check.set_defaults(func=permissions_check)
 
 
 def main():

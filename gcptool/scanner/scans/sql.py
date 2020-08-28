@@ -15,7 +15,7 @@ class TLSEnforcement(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("sql", "tls", ["cloudsql.instances.list"])
+        return ScanMetadata("sql", "tls", ["roles/iam.securityReviewer"])
 
     def run(self, context: Context) -> List[Finding]:
         vulnerable_by_project: Dict[str, List[instances.Instance]] = {}

@@ -7,3 +7,5 @@ client = build("iam", "v1", credentials=credentials)
 # pylint: disable=no-member
 roles = client.roles()
 
+# pylint: disable=no-member
+permissions = client.permissions()
