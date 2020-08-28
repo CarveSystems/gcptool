@@ -1,6 +1,6 @@
 import enum
 from dataclasses import dataclass
-from typing import Any, List, NewType, Optional
+from typing import Any, List, Set, NewType, Optional
 
 from ..cache import Cache, with_cache
 from . import api
@@ -88,3 +88,23 @@ def _parse(raw: dict) -> Project:
         raw["lifecycleState"],
         parent,
     )
+
+
+def test_permissions(project_id: str, permissions: Set[str]) -> Set[str]:
+    actual_permissions = set()
+    permissions_to_check = list(permissions)
+
+    while len(permissions_to_check) != 0:
+        # GCP limits us to checking 100 permissions at a time
+        body = {"permissions": list(permissions_to_check[:100])}
+        permissions_to_check = permissions_to_check[100:]
+
+        request = api.projects.testIamPermissions(resource=project_id, body=body)
+        response = request.execute()
+
+        actual_permissions |= set(response.get("permissions", []))
+
+    missing_permissions = permissions - actual_permissions
+
+    return missing_permissions
+
