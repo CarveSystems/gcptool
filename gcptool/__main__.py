@@ -68,7 +68,7 @@ def list_projects(_args):
 
 parser = argparse.ArgumentParser(prog="gcptool")
 
-subparsers = parser.add_subparsers(required=True)
+subparsers = parser.add_subparsers(dest="command", required=True)
 parser_projects = subparsers.add_parser(
     "list-projects", help="List process accessible to this user"
 )
