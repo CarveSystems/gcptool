@@ -28,7 +28,7 @@ class Scanner:
                 
                 print(f"Running scanner {meta.name} for {meta.service}...")
                 scan = scanner()
-                finding = scan.run(context)
+                finding = scan.run(self.context)
                 if finding:
                     print(f"Complete. There is a potential finding.")
                     all_findings.extend(findings)
