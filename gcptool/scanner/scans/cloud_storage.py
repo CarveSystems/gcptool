@@ -20,7 +20,7 @@ class PubliclyWriteableBuckets(Scan):
             "write_buckets",
             "Projects Have World-Writeable Storage Buckets",
             Severity.HIGH,
-            ["roles/iam.securityReviewer"],
+            ["roles/iam.securityReviewer", "storage.buckets.get"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:

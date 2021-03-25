@@ -6,11 +6,11 @@ Kubernetes Engine clusters use a control plane that is hosted by Google separate
 
 The following clusters were found to have masters exposed to the internet:
 
+| Project | Cluster | Master IP Address |
+|:--------|:--------|:------------------|
 {% for project in instances %}
-Clusters in {{project}}:
-
 {% for cluster in instances[project] %}
-- {{cluster.name}}: Accessible at {{ cluster.endpoint }}
+| {{ project }} || {{ cluster.name }} || {{ cluster.endpoint }} |
 {% endfor %}
 {% endfor %}
 {% endblock %}

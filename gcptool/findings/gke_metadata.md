@@ -8,11 +8,21 @@ Additionally, the metadata service allows for the retrieval of credentials for t
 
 The following clusters did not protect their instance metadata:
 
+| Project | Cluster Name |
+|:--------|:-------------|
 {% for project in instances %}
-Clusters in {{project}}:
+{% for cluster in instances[project]["all"] %}
+| {{ project }} | {{ cluster.name }} |
+{% endfor %}
+{% endfor %}
 
-{% for cluster in instances[project] %}
-- {{cluster.name}}
+The following clusters did not protect instance metadata, allowed API access to all Google Cloud APIs, and used a high-privileged service account. This combination would allow compromise of a running pod to lead to compromise of the containing project:
+
+| Project | Cluster Name | IAM User |
+|:--------|:-------------|:---------|
+{% for project in instances %}
+{% for cluster in instances[project]["high_privilege"] %}
+| {{ project }} | {{ cluster.name }} | {{ service_accounts[cluster.name] }} |
 {% endfor %}
 {% endfor %}
 

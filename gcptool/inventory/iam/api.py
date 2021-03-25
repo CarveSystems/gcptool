@@ -9,3 +9,6 @@ roles = client.roles()
 
 # pylint: disable=no-member
 permissions = client.permissions()
+
+# pylint: disable=no-member
+service_accounts = client.projects().serviceAccounts()

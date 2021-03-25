@@ -2,6 +2,10 @@ import enum
 from dataclasses import dataclass
 from typing import Any, List, Set, NewType, Optional
 
+from gcptool.util import parse_dataclass
+
+from ..iam.policy import Policy
+
 from ..cache import Cache, with_cache
 from . import api
 
@@ -88,6 +92,17 @@ def _parse(raw: dict) -> Project:
         raw["lifecycleState"],
         parent,
     )
+
+@with_cache("iam", "project")
+def __get_iam_policy(project_id: str):
+    return api.projects.getIamPolicy(resource=project_id, body={"options": {"requestedPolicyVersion": 3}}).execute()
+
+def get_iam_policy(project_id: str, cache: Cache) -> Policy:
+    raw_iam_policy = __get_iam_policy(cache, project_id)
+
+    policy = parse_dataclass(raw_iam_policy, Policy)
+
+    return policy
 
 
 def test_permissions(project_id: str, permissions: Set[str]) -> Set[str]:
