@@ -27,7 +27,7 @@ class PubliclyWriteableBuckets(Scan):
         # TODO - make Cloud Storage respect the cache/context
         project = context.projects[0]
 
-        all_buckets = buckets.all(project.id)
+        all_buckets = buckets.all(project.id, context.cache)
 
         readable_buckets: List[str] = []
         writable_buckets: List[str] = []
@@ -97,7 +97,7 @@ class PubliclyWriteableBuckets(Scan):
             if readable:
                 readable_buckets.append(bucket.id)
 
-        if len(writable_buckets):
+        if len(writable_buckets) or len(readable_buckets):
             return self.finding(
                 readable_buckets=readable_buckets, writable_buckets=writable_buckets,
             )

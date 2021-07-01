@@ -13,7 +13,7 @@ from .scanner.output import write_findings
 
 def scan(args):
     print(f"Using cache at {args.cache}...")
-    cache = Cache(args.cache)
+    cache = Cache(args.cache, args.cache_only)
 
     # Take the list of projects to scan from the command line as a comma-separated list of project IDs.
     to_scan = [projects.get(cache, project_id) for project_id in args.project.split(",")]
@@ -82,6 +82,12 @@ parser_scan.add_argument(
     help="File to write cached API data to.",
     type=Path,
     default=Path(os.getcwd()) / "gcptool_cache.json",
+)
+parser_scan.add_argument(
+    "--cache-only",
+    help='If enabled, do not make any outbound API requests. Only analyze existing, cached data.',
+    type=bool,
+    default=False
 )
 parser_scan.set_defaults(func=scan)
 

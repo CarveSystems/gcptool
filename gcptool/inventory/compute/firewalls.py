@@ -7,6 +7,7 @@ import netaddr
 from gcptool.util import parse_dataclass
 
 from . import api
+from .types import Firewall
 from gcptool.inventory.cache import with_cache, Cache
 
 class RuleDirection(enum.Enum):
@@ -39,5 +40,5 @@ class FirewallRule:
 def __all(project_id: str) -> List[Any]:
     return api.firewalls.list(project=project_id).execute().get("items", [])
 
-def all(project_id: str, cache: Cache) -> List[FirewallRule]:
-    return [parse_dataclass(firewall, FirewallRule) for firewall in __all(cache, project_id)]
+def all(project_id: str, cache: Cache) -> List[Firewall]:
+    return [parse_dataclass(firewall, Firewall) for firewall in __all(cache, project_id)]

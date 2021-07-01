@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, Any, Optional
+from typing import Dict, List, Any, Optional
 
 from netaddr import IPSet, IPAddress, iprange_to_globs
 
@@ -58,13 +58,13 @@ class IPAddressDump(Scan):
     def run(self, context: Context) -> Optional[Finding]:
         ip_addresses = set()
 
-        firewalls = defaultdict(list)
+        firewalls: Dict[str, List[compute.firewalls.Firewall]] = defaultdict(list)
 
         for project in context.projects:
             # Calculate firewall rules for each network
             for firewall in compute.firewalls.all(project.id, context.cache):
 
-                if firewall.direction != compute.firewalls.RuleDirection.Ingress:
+                if firewall.direction != firewall.direction.Ingress:
                     continue
 
                 if not firewall.allowed:
@@ -72,7 +72,7 @@ class IPAddressDump(Scan):
 
                 # funky control flow
                 for allow in firewall.allowed:
-                    if allow['IPProtocol'] in {'all', 'tcp'}:
+                    if allow.IPProtocol in {'all', 'tcp'}:
                         break
                 else:
                     continue
@@ -87,17 +87,17 @@ class IPAddressDump(Scan):
             addresses = compute.addresses.all(project.id, context.cache)
 
             for address in addresses:
-                ip_addresses.add(IPAddress(address["address"]))
+                ip_addresses.add(IPAddress(address.address))
 
             instances = compute.instances.all(project.id, context.cache)
 
             for instance in instances:
-                tags = set(instance["tags"].get("items", []))
+                tags = instance.tags.items
 
-                for interface in instance.get("networkInterfaces", []):
+                for interface in instance.network_interfaces:
 
-                    network = interface["network"]
-                    network_ip = IPAddress(interface["networkIP"])
+                    network = interface.network
+                    network_ip = IPAddress(interface.network_i_p)
 
                     matching_rules = []
 
@@ -110,8 +110,8 @@ class IPAddressDump(Scan):
                                 if network_ip in dest:
                                     in_rule = True
                         
-                        if rule.target_tags and (rule.target_tags & tags):
-                            in_rule = True 
+                        if rule.target_tags and (set(rule.target_tags) & set(tags)):
+                            in_rule = True
 
                         if in_rule:
                             if rule.source_ranges and '0.0.0.0/0' in rule.source_ranges:
@@ -119,8 +119,8 @@ class IPAddressDump(Scan):
                                 matching_rules.append(rule)
 
 
-                    for config in interface.get("accessConfigs", {}):
-                        ip_address = config.get("natIP")
+                    for config in interface.access_configs:
+                        ip_address = config.nat_i_p
                         if matching_rules and ip_address:
                             ip_address = IPAddress(ip_address)
                             ip_addresses.add(ip_address)

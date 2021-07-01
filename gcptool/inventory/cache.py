@@ -11,8 +11,9 @@ class Cache:
 
     VERSION = 1
 
-    def __init__(self, filename: Path):
+    def __init__(self, filename: Path, force : bool = False):
         self.filename = filename
+        self.force = force
 
         if self.filename.exists():
             with self.filename.open("r") as f:
@@ -38,11 +39,15 @@ class Cache:
         service_data = self.data.get(service)
 
         if not service_data:
+            if self.force:
+                raise IndexError(f'Cache-only mode requested, but {service} not found')
             return None
 
         resource_data = service_data.get(resource)
 
         if not resource_data:
+            if self.force:
+                raise IndexError(f'Cache-only mode requested, but {service}:{resource} not found')
             return None
 
         return resource_data.get(project)
