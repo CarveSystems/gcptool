@@ -1,7 +1,5 @@
 from typing import List, Dict
 
-from gcptool.util import parse_dataclass
-
 from . import api
 from .types import Address
 from gcptool.inventory.cache import with_cache, Cache
@@ -19,11 +17,11 @@ def __all(project_id: str):
 
 # a flat list of all addresses in project, for all regions
 def all(project_id: str, cache: Cache) -> List[Address]:
-    return [parse_dataclass(address, Address) for by_region in __all(cache, project_id).values() for address in by_region]
+    return [Address(**address) for by_region in __all(cache, project_id).values() for address in by_region]
 
 # nested lists of all addresses in project, by region
 def by_region(project_id: str, cache: Cache) -> Dict[str, List[Address]]:
     addresses = {}
     for region,region_addresses in __all(cache, project_id).items():
-        addresses[region] = [parse_dataclass(address, Address) for address in region_addresses]
+        addresses[region] = [Address(**address) for address in region_addresses]
     return addresses

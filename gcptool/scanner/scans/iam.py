@@ -95,8 +95,8 @@ class PublicPubSub(Scan):
     @staticmethod
     def meta():
         return ScanMetadata(
-            "iam",
-            "public_pubsub",
+            "pubsub",
+            "public",
             "PubSub topics were world-sendable",
             Severity.LOW,
             ["roles/iam.SecurityReviewer"],
@@ -168,5 +168,93 @@ class UnrotatedServiceAccountKeys(Scan):
         if instances:
             return self.finding(instances=instances)
 
+@scan
+class UserManagedServiceAccountKeys(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata("iam",
+        "user_managed_keys",
+        "User managed service account keys",
+        Severity.LOW,
+        ["roles/iam.SecurityReviewer"])
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        instances = {}
+
+        for project in context.projects:
+            project_instances = set()
+
+            for service_account in service_accounts.list(project.id, context.cache):
+                for key in service_accounts.list_keys(service_account, context.cache):
+
+                    if key.key_type == key.key_type.user_managed:
+                        project_instances.add(service_account.email)
+            
+            if project_instances:
+                instances[project.id] = list(project_instances)
+
+        if instances:
+            return self.finding(instances=instances)
 
 
+@scan
+class ServiceAccountUsers(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "iam",
+            "service_roles",
+            "User account assigned service account role for a project",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"]
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        instances = []
+
+        for project in context.projects:
+            
+            iam_policy = projects.get_iam_policy(project.id, context.cache)
+
+            for binding in iam_policy.bindings:
+
+                if binding.role == 'roles/iam.serviceAccountUser':
+                    instances.extend((project.name, member.split(':')[1]) for member in binding.members)
+
+        if instances:
+            return self.finding(instances=instances)
+
+@scan
+class GmailAccounts(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "iam",
+            "gmail",
+            "Roles granted to GMail account",
+            Severity.MEDIUM,
+            ["roles/iam.securityReviewer"]
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+        instances = {}
+
+        for project in context.projects:
+
+            project_instances = set()
+
+            iam_policy = projects.get_iam_policy(project.id, context.cache)
+
+            for binding in iam_policy.bindings:
+
+                for member in binding.members:
+                    if member.startswith('user:') and member.endswith('@gmail.com'):
+                        project_instances.add(member.split(':')[1])
+
+            if project_instances:
+                instances[project.name] = list(project_instances)
+
+        if instances:
+            return self.finding(instances=instances)

@@ -25,7 +25,6 @@ def all(project: str, cache: Cache) -> List[storage.Bucket]:
 
 
     for props in raw_buckets:
-        
         bucket_name = props.get('name')
         bucket = storage.Bucket(client, bucket_name)
         bucket._set_properties(props)

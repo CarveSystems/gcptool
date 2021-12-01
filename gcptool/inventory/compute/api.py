@@ -16,6 +16,9 @@ backend_services = client.backendServices()
 firewalls = client.firewalls()
 
 # pylint: disable=no-member
+forwarding_rules = client.forwardingRules()
+
+# pylint: disable=no-member
 instances = client.instances()
 
 # pylint: disable=no-member
@@ -26,6 +29,9 @@ regions = client.regions()
 
 # pylint: disable=no-member
 ssl_certs = client.sslCertificates()
+
+# pylint: disable=no-member
+ssl_policies = client.sslPolicies()
 
 # pylint: disable=no-member
 target_http_proxies = client.targetHttpProxies()

@@ -5,6 +5,7 @@ import gcptool.scanner.scans
 from gcptool.inventory import iam
 from gcptool.inventory.iam import permissions
 from gcptool.inventory.resourcemanager import projects
+from gcptool.inventory.serviceusage import services
 
 from .context import Context
 from .finding import Finding
@@ -23,8 +24,43 @@ class Scanner:
         all_findings: List[Finding] = []
 
         for scanner in all_scans:
+
+            all_projects = self.context.projects[::]
+
             try:
                 meta = scanner.meta()
+
+                if meta.service == 'pubsub':
+                    # Hack for this project.
+                    continue
+
+                dirty_projects = []
+
+                # skip checking IAM (which always works) 
+                if meta.service != "iam":
+                    for project in  self.context.projects:
+
+                        try:
+                            project_services = services.all(project.number, self.context.cache)
+                        except:
+                            # we seem to get rate-limited here ...
+                            print(f'failed to get list of servicesfor {project.number}, assuming all enabled')
+                            continue
+
+                        mapped_name = services.Mapping.get(meta.service, meta.service)
+
+                        api_name = f'projects/{project.number}/services/{mapped_name}.googleapis.com'
+
+                        for service in project_services:
+                            if service.name == api_name and service.state == service.state.enabled:
+                                break
+                        else:
+                            print(f"Skipping project {project.name} because {mapped_name} API is not enabled")
+                                
+                            dirty_projects.append(project)
+
+                for project in dirty_projects:
+                    self.context.projects.remove(project)
 
                 print(f"Running scanner {meta.name} for {meta.service}...")
                 scan = scanner()
@@ -41,6 +77,10 @@ class Scanner:
 
             except gcperrors.Forbidden as e:
                 print(f"Insufficient permissions to complete this scan: {str(e)}")
+
+            finally:
+                # Restore the projects list
+                self.context.projects = all_projects
 
             print(f"Aborted.")
 

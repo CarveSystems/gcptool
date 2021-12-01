@@ -2,15 +2,13 @@ import enum
 from dataclasses import dataclass
 from typing import Any, List, Set, NewType, Optional
 
-from gcptool.util import parse_dataclass
-
-from ..iam.policy import Policy
-
 from ..cache import Cache, with_cache
 from . import api
 
-# These classes are used to assist with deserialization of GCP project resources.
+from .types import Policy
 
+# These classes are used to assist with deserialization of GCP project resources.
+# TODO - unify this with the other dataclasses we're autogenerating.
 
 class LifecycleState(enum.Enum):
     """
@@ -100,7 +98,7 @@ def __get_iam_policy(project_id: str):
 def get_iam_policy(project_id: str, cache: Cache) -> Policy:
     raw_iam_policy = __get_iam_policy(cache, project_id)
 
-    policy = parse_dataclass(raw_iam_policy, Policy)
+    policy = Policy(**raw_iam_policy)
 
     return policy
 

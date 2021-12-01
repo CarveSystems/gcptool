@@ -1,4 +1,5 @@
 from typing import List, Any, Optional
+from gcptool.inventory.compute.types import Op
 
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
@@ -24,10 +25,11 @@ class PubliclyWriteableBuckets(Scan):
         )
 
     def run(self, context: Context) -> Optional[Finding]:
-        # TODO - make Cloud Storage respect the cache/context
-        project = context.projects[0]
+        return
+        all_buckets = []
 
-        all_buckets = buckets.all(project.id, context.cache)
+        for project in context.projects: 
+            all_buckets.extend(buckets.all(project.id, context.cache))
 
         readable_buckets: List[str] = []
         writable_buckets: List[str] = []
@@ -76,21 +78,25 @@ class PubliclyWriteableBuckets(Scan):
                         elif "READER" in entity.roles:
                             readable = True
 
-            iam_policy = bucket.get_iam_policy()
+            try:
+                iam_policy = bucket.get_iam_policy()
 
-            for binding in iam_policy.bindings:
-                public_policy = len(binding["members"] & public_entities) > 0
+                for binding in iam_policy.bindings:
+                    public_policy = len(binding["members"] & public_entities) > 0
 
-                if public_policy:
-                    print(f"! found public IAM policy {binding} for bucket {bucket.id}")
+                    if public_policy:
+                        print(f"! found public IAM policy {binding} for bucket {bucket.id}")
 
-                    # Check to see what this role gives us...
-                    # TODO - we should check to see what permissions this role actually gives us.
-                    if binding["role"] in write_roles:
-                        writable = True
-                        readable = True
-                    elif binding["role"] in read_roles:
-                        readable = True
+                        # Check to see what this role gives us...
+                        # TODO - we should check to see what permissions this role actually gives us.
+                        if binding["role"] in write_roles:
+                            writable = True
+                            readable = True
+                        elif binding["role"] in read_roles:
+                            readable = True
+            except:
+                print(f'!! failed to read IAM policy for {bucket}')
+                pass
 
             if writable:
                 writable_buckets.append(bucket.id)
@@ -104,6 +110,59 @@ class PubliclyWriteableBuckets(Scan):
 
         return None
 
+@scan
+class LoggingDisabledBuckets(Scan):
+
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "gcs",
+            "bucket_logging",
+            "Cloud Storage buckets with logging disabled",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"]
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+        
+        logging_disabled_buckets = []
+
+        for project in context.projects:
+
+            for bucket in buckets.all(project.id, context.cache):
+
+                if not bucket.get_logging():
+                    logging_disabled_buckets.append(bucket.id)
+
+
+        if logging_disabled_buckets:
+            return self.finding(buckets=logging_disabled_buckets)
+
+@scan
+class VersioningDisabledBuckets(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "gcs",
+            "bucket_versioning",
+            "Cloud Storage buckets with versioning disabled",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"]
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+        version_disabled_buckets = []
+
+        for project in context.projects:
+
+            for bucket in buckets.all(project.id, context.cache):
+
+                if not bucket.versioning_enabled:
+                    version_disabled_buckets.append(bucket.id)
+
+
+        if version_disabled_buckets:
+            return self.finding(buckets=version_disabled_buckets)
 
 @scan
 class PubliclyReadableBuckets(Scan):

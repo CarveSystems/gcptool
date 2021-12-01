@@ -89,11 +89,11 @@ class EnforceWorkloadIdentity(Scan):
 
                 high_privilege_account = None
                 for node_pool in cluster.node_pools:
-                    config = node_pool["config"]
+                    config = node_pool.config
                     # These correspond to "Allow Full Access to Google APIs"
-                    if 'https://www.googleapis.com/auth/any-api' in config['oauthScopes']:
+                    if 'https://www.googleapis.com/auth/any-api' in config.oauth_scopes:
                         high_privilege_account = config["serviceAccount"]
-                    elif 'https://www.googleapis.com/auth/cloud-platform' in config['oauthScopes']:
+                    elif 'https://www.googleapis.com/auth/cloud-platform' in config.oauth_scopes:
                         high_privilege_account = config["serviceAccount"]
 
                 if not cluster.workload_identity_config:
@@ -149,7 +149,7 @@ class MiscellaneousHardeningSettings(Scan):
                 if cluster.master_auth.username and cluster.master_auth.password:
                     basic_auth.append(cluster.name)
 
-                if not cluster.pod_security_policy_config.enabled:
+                if not cluster.pod_security_policy_config or not cluster.pod_security_policy_config.enabled:
                     pod_security_policy.append(cluster.name)
 
                 if not cluster.network_policy or not cluster.network_policy.enabled:

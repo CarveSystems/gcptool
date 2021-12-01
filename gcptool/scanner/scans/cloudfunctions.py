@@ -25,8 +25,8 @@ class CloudFunctionInventory(Scan):
             triggerable = []
 
             for function in cloudfunctions.functions.list(project.id, context.cache):
-                if function.get("httpsTrigger"):
-                    triggerable.append(function['name'])
+                if function.https_trigger:
+                    triggerable.append(function.name)
 
             if triggerable:
                 instances[project.id] = triggerable

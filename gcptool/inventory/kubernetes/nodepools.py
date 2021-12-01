@@ -4,7 +4,7 @@ from . import api
 from ..cache import Cache, with_cache
 
 
-@with_cache("gke", "nodepool")
+@with_cache("container", "nodepool")
 def __list(parent: str) -> List[Any]:
     request = api.node_pools.list(parent=parent)
     response = request.execute()
