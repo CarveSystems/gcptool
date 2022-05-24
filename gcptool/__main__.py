@@ -63,7 +63,7 @@ def list_projects(_args):
     print("Listing of all projects.\n")
 
     for project in projects.all():
-        print(f"{project.id}:\t{project.name}")
+        print(f"|{project.id}|{project.name}|{project.number}|")
 
 
 parser = argparse.ArgumentParser(prog="gcptool")

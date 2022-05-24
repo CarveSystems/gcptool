@@ -17,7 +17,8 @@ setuptools.setup(
       'google-cloud-storage',
       'google-api-python-client',
       'jinja2',
-      'netaddr'
+      'netaddr',
+      'pydantic'
    ],
    python_requires='>=3.7'
 )

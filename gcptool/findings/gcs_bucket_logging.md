@@ -3,6 +3,7 @@
 {% block body %}
 %{c} found GCP storage buckets with access logging disabled.
 
+Of the {{ total }} buckets identified for the %{app}, {{ affected }} were found to have logging disabled.
 
 The following buckets do not have access logging enabled:
 

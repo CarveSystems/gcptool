@@ -4,6 +4,8 @@
 
 %{c} found GCP storage buckets with object versioning disabled.
 
+Of the {{ total }} buckets identified for the %{app}, {{ affected }} were found to have versioning disabled.
+
 The following buckets have object versioning disabled:
 
 {% for bucket in buckets %}

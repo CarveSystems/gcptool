@@ -6,9 +6,11 @@ It should also be noted that as of June 30, 2018, TLS version 1.0 is considered 
 
 %{c} identified the following GCP resources with vulnerable HTTPS servers running on port 443:
 
+| Resource Name | Public IP Address |
+| ------------- | ----------------- |
 {% for project in instances %}
 {% for lb, rule in instances[project] %}
-- {{lb.name}} - {{ rule.ip_address }}
+| {{lb.name}}   | {{ rule.ip_address }} |
 {% endfor %}
 {% endfor %}
 

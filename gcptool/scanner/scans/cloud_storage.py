@@ -124,19 +124,22 @@ class LoggingDisabledBuckets(Scan):
         )
 
     def run(self, context: Context) -> Optional[Finding]:
+
+        total_buckets = 0
         
         logging_disabled_buckets = []
 
         for project in context.projects:
 
             for bucket in buckets.all(project.id, context.cache):
+                total_buckets += 1
 
                 if not bucket.get_logging():
                     logging_disabled_buckets.append(bucket.id)
 
 
         if logging_disabled_buckets:
-            return self.finding(buckets=logging_disabled_buckets)
+            return self.finding(buckets=logging_disabled_buckets, total=total_buckets, affected=len(logging_disabled_buckets))
 
 @scan
 class VersioningDisabledBuckets(Scan):
@@ -152,6 +155,7 @@ class VersioningDisabledBuckets(Scan):
 
     def run(self, context: Context) -> Optional[Finding]:
         version_disabled_buckets = []
+        total_buckets = 0
 
         for project in context.projects:
 
@@ -162,7 +166,7 @@ class VersioningDisabledBuckets(Scan):
 
 
         if version_disabled_buckets:
-            return self.finding(buckets=version_disabled_buckets)
+            return self.finding(buckets=version_disabled_buckets, total=total_buckets, affected=len(version_disabled_buckets))
 
 @scan
 class PubliclyReadableBuckets(Scan):
