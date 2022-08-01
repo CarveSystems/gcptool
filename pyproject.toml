@@ -1,6 +1,53 @@
+[build-system]
+requires = [
+    "hatchling>=1.6.0",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "gcptool"
+readme = "README.md"
+license = ""
+requires-python = ">=3.8"
+authors = [
+    { name = "Aidan Noll", email = "aidan.noll@carvesystems.com" },
+]
+dependencies = [
+    "google-api-python-client",
+    "google-cloud-container",
+    "google-cloud-resource-manager",
+    "google-cloud-storage",
+    "jinja2",
+    "netaddr",
+    "pydantic",
+]
+dynamic = [
+    "version",
+]
+
+[project.scripts]
+gcptool = "gcptool.__main__:main"
+
+[tool.hatch.version]
+path = "gcptool/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/gcptool",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "gcptool",
+    ]
+
 [tool.black]
 line-length = 100
-target-version = ['py37', 'py38']
+target-version = [
+    "py38",
+    "py39",
+    "py310",
+]
 
 [tool.isort]
 profile = "black"
