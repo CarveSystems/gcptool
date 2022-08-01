@@ -28,8 +28,6 @@ class ComputeInventory(Scan):
 
     def run(self, context: Context) -> Optional[Finding]:
         for project in context.projects:
-            print(f"Gathering inventory for {project.id}")
-
             # ensure that all data for compute gets into the cache
             zones = compute.zones.all(project.id, context.cache)
             regions = compute.regions.all(project.id, context.cache)
@@ -124,7 +122,6 @@ class IPAddressDump(Scan):
 
                         if in_rule:
                             if rule.source_ranges and "0.0.0.0/0" in rule.source_ranges:
-                                print(f"Rule match: {rule}")
                                 matching_rules.append(rule)
 
                     if interface.access_configs:
@@ -137,7 +134,6 @@ class IPAddressDump(Scan):
         for project in context.projects:
             for rule in compute.forwarding_rules.all(project.id, context.cache):
                 if rule.load_balancing_scheme == rule.load_balancing_scheme.external:
-                    print(rule.target)
                     ip_addresses.add(IPAddress(rule.ip_address))
 
         ip_addresses = [addr for addr in ip_addresses if not addr.is_private()]

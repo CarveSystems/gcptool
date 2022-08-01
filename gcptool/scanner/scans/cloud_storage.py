@@ -84,7 +84,7 @@ class PubliclyWriteableBuckets(Scan):
                     public_policy = len(binding["members"] & public_entities) > 0
 
                     if public_policy:
-                        print(f"! found public IAM policy {binding} for bucket {bucket.id}")
+                        logging.debug(f"! found public IAM policy {binding} for bucket {bucket.id}")
 
                         # Check to see what this role gives us...
                         # TODO - we should check to see what permissions this role actually gives us.

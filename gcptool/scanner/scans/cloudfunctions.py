@@ -1,3 +1,4 @@
+import logging
 from typing import Any, List, Optional
 
 import gcptool.inventory.cloudfunctions as cloudfunctions
@@ -34,7 +35,7 @@ class CloudFunctionInventory(Scan):
                 instances[project.id] = triggerable
 
         if instances:
-            print(instances)
+            logging.debug(instances)
             return self.finding(instances=instances)
 
         return None

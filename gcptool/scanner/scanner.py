@@ -1,8 +1,8 @@
+import logging
 from typing import Any, Dict, List, Set
 
 import google.api_core.exceptions as gcperrors
 
-import gcptool.scanner.scans
 from gcptool.inventory import iam
 from gcptool.inventory.iam import permissions
 from gcptool.inventory.resourcemanager import projects
@@ -20,7 +20,7 @@ class Scanner:
 
     def scan(self) -> List[Finding]:
 
-        print("Scanner: Beginning scan")
+        logging.info("Scanner: Beginning scan")
 
         all_findings: List[Finding] = []
 
@@ -30,10 +30,6 @@ class Scanner:
 
             try:
                 meta = scanner.meta()
-
-                if meta.service == "pubsub":
-                    # Hack for this project.
-                    continue
 
                 dirty_projects = []
 
@@ -45,7 +41,7 @@ class Scanner:
                             project_services = services.all(project.number, self.context.cache)
                         except:
                             # we seem to get rate-limited here ...
-                            print(
+                            logging.warning(
                                 f"failed to get list of servicesfor {project.number}, assuming all enabled"
                             )
                             continue
@@ -60,7 +56,7 @@ class Scanner:
                             if service.name == api_name and service.state == service.state.enabled:
                                 break
                         else:
-                            print(
+                            logging.debug(
                                 f"Skipping project {project.name} because {mapped_name} API is not enabled"
                             )
 
@@ -83,13 +79,11 @@ class Scanner:
                 continue
 
             except gcperrors.Forbidden as e:
-                print(f"Insufficient permissions to complete this scan: {str(e)}")
+                logging.warning(f"Insufficient permissions to complete this scan: {str(e)}")
 
             finally:
                 # Restore the projects list
                 self.context.projects = all_projects
-
-            print(f"Aborted.")
 
         return all_findings
 
@@ -136,17 +130,15 @@ class Scanner:
                 if len(missing_permissions) != 0:
                     # If there are any missing permissions... we're not good to go :(
                     all_okay = False
-                    print(f"Permissions check FAILED for project {project.id}")
-                    print(f"Need the following permissions: {missing_permissions}")
+                    logging.error(f"Permissions check FAILED for project {project.id}")
+                    logging.error(f"Need the following permissions: {missing_permissions}")
 
             if not all_okay:
-                print(
+                logging.error(
                     f"Cannot run scan {meta.service}:{meta.name} due to failed permissions check."
                 )
             else:
-                print(f"Permissions check succeeded for {meta.service}:{meta.name}!")
-
-            print()
+                logging.info(f"Permissions check succeeded for {meta.service}:{meta.name}!")
 
         self.context.cache.save()
 

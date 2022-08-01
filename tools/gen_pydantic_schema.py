@@ -44,9 +44,6 @@ def recursive_replace_any(obj):
 
 recursive_replace_any(schemas)
 
-aaa = json.dumps(schemas, indent=2)
-print(aaa)
-
 for name, schema in schemas.items():
     with open(f"{name}", "w") as f:
         schema["title"] = name

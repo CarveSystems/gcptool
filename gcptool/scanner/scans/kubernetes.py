@@ -168,7 +168,6 @@ class MiscellaneousHardeningSettings(Scan):
                     pod_security_policy.append(cluster.name)
 
                 if not cluster.network_policy or not cluster.network_policy.enabled:
-                    print(cluster)
                     network_policy.append(cluster.name)
 
             if basic_auth or legacy_auth or pod_security_policy or network_policy:

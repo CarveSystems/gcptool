@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 from pathlib import Path
 
@@ -104,6 +105,8 @@ parser_check.set_defaults(func=permissions_check)
 
 
 def main():
+    logging.basicConfig(filename="gcptool.log")
+
     args = parser.parse_args()
 
     args.func(args)
