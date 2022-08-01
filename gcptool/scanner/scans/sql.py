@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from gcptool.inventory.sql import instances
+from gcptool.inventory.sql import instances, users
 from gcptool.scanner.context import Context
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
@@ -29,7 +29,7 @@ class TLSEnforcement(Scan):
 
             p = instances.all(project.id, context.cache)
 
-            open_instances: List[instances.Instance] = []
+            open_instances: List[instances.DatabaseInstance] = []
 
             for instance in p:
                 has_public_ip = False
@@ -54,3 +54,41 @@ class TLSEnforcement(Scan):
             return self.finding(vulnerable_projects=vulnerable_by_project)
 
         return None
+
+
+@scan
+class RootLoginFromAnyHost(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "sql",
+            "root_login",
+            "Cloud SQL instances allow root login from any host",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        found = []
+
+        for project in context.projects:
+
+            p = instances.all(project.id, context.cache)
+
+            for instance in p:
+
+                if not instance.database_version.value.startswith("MYSQL"):
+                    continue
+
+                u = users.all(project.id, instance.id, context.cache)
+
+                for user in u:
+                    if user.name != "root":
+                        continue
+
+                    if user.host in {"%", "0.0.0.0", "/0"}:
+                        found.append(instance)
+
+        if len(found):
+            return self.finding(instances=found)

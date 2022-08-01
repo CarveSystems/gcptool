@@ -1,4 +1,5 @@
 from collections import defaultdict
+from os import stat
 from typing import Any, Dict, List, Optional
 
 from netaddr import IPAddress, IPSet, iprange_to_globs
@@ -297,6 +298,51 @@ class InternalTrafficFirewall(Scan):
 
 
 @scan
+class InternalTrafficFirewall(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "compute",
+            "firewall_all_ports",
+            "Firewall rule allows all ports",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+        matches = {}
+
+        for project in context.projects:
+
+            project_matches = []
+
+            for firewall in compute.firewalls.all(project.id, context.cache):
+
+                if not firewall.allowed:
+                    continue
+
+                if firewall.disabled:
+                    continue
+
+                if firewall.direction != firewall.direction.ingress:
+                    continue
+
+                for item in firewall.allowed:
+                    if item.ports and ("0-65535" in item.ports or "1-65535" in item.ports):
+                        break
+                else:
+                    continue
+
+                project_matches.append(firewall)
+
+            if project_matches:
+                matches[project.id] = project_matches
+
+        if matches:
+            return self.finding(instances=matches)
+
+
+@scan
 class FirewallAllowsRDP(Scan):
     @staticmethod
     def meta() -> ScanMetadata:
@@ -326,7 +372,6 @@ class FirewallAllowsRDP(Scan):
             return self.finding(instances=matches)
 
 
-@scan
 class FirewallAllowsSSH(Scan):
     @staticmethod
     def meta() -> ScanMetadata:
@@ -347,6 +392,47 @@ class FirewallAllowsSSH(Scan):
                     continue
 
                 if firewall.name == "default-allow-ssh":
+                    project_matches.append(firewall)
+
+            if project_matches:
+                matches[project.id] = project_matches
+
+        if matches:
+            return self.finding(instances=matches)
+
+
+@scan
+class FirewallPublic(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "compute",
+            "firewall_public",
+            "Firewall rule allows public traffic",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        matches = {}
+
+        for project in context.projects:
+
+            project_matches = []
+
+            for firewall in compute.firewalls.all(project.id, context.cache):
+
+                if firewall.disabled:
+                    continue
+
+                if firewall.direction != firewall.direction.ingress:
+                    continue
+
+                if not firewall.allowed:
+                    continue
+
+                if "0.0.0.0/0" in firewall.source_ranges:
                     project_matches.append(firewall)
 
             if project_matches:
