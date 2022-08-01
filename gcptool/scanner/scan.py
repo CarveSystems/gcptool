@@ -1,11 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List, TypeVar, Callable, Generic, Any, Type, Optional
 from collections import defaultdict
-
 from dataclasses import dataclass
+from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar
 
-from .finding import Finding, Severity
 from .context import Context
+from .finding import Finding, Severity
 
 
 @dataclass

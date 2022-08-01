@@ -1,7 +1,6 @@
-from dataclasses import dataclass, field
 import enum
-
-from typing import Dict, Any
+from dataclasses import dataclass, field
+from typing import Any, Dict
 
 
 class Severity(enum.IntEnum):

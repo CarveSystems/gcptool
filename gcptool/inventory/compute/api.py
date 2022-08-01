@@ -1,5 +1,6 @@
-from gcptool.creds import credentials
 from googleapiclient.discovery import build
+
+from gcptool.creds import credentials
 
 client = build("compute", "v1", credentials=credentials)
 
@@ -50,4 +51,3 @@ vpn_gateways = client.vpnGateways()
 
 # pylint: disable=no-member
 zones = client.zones()
-

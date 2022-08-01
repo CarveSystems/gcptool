@@ -1,7 +1,7 @@
-from typing import List, Any
+from typing import Any, List
 
-from . import api
 from ..cache import Cache, with_cache
+from . import api
 
 
 @with_cache("container", "nodepool")

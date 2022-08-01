@@ -1,14 +1,14 @@
 from collections import defaultdict
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
-from netaddr import IPSet, IPAddress, iprange_to_globs
-from gcptool.inventory.compute import firewalls, target_https_proxies
-
-from gcptool.scanner.finding import Finding, Severity
-from gcptool.scanner.scan import Scan, ScanMetadata, scan
-from gcptool.scanner.context import Context
+from netaddr import IPAddress, IPSet, iprange_to_globs
 
 import gcptool.inventory.compute as compute
+from gcptool.inventory.compute import firewalls, target_https_proxies
+from gcptool.scanner.context import Context
+from gcptool.scanner.finding import Finding, Severity
+from gcptool.scanner.scan import Scan, ScanMetadata, scan
+
 
 @scan
 class ComputeInventory(Scan):
@@ -18,16 +18,19 @@ class ComputeInventory(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("compute", "inventory",
-                            "Inventory of Compute Resources",
-                            Severity.INFO,
-                            ["roles/iam.securityReviewer"])
+        return ScanMetadata(
+            "compute",
+            "inventory",
+            "Inventory of Compute Resources",
+            Severity.INFO,
+            ["roles/iam.securityReviewer"],
+        )
 
     def run(self, context: Context) -> Optional[Finding]:
         for project in context.projects:
-            print(f'Gathering inventory for {project.id}')
+            print(f"Gathering inventory for {project.id}")
 
-            #ensure that all data for compute gets into the cache
+            # ensure that all data for compute gets into the cache
             zones = compute.zones.all(project.id, context.cache)
             regions = compute.regions.all(project.id, context.cache)
             addresses = compute.addresses.all(project.id, context.cache)
@@ -48,15 +51,18 @@ class ComputeInventory(Scan):
         # TODO an actual finding, if we want one
         return None
 
+
 @scan
 class IPAddressDump(Scan):
-
     @staticmethod
     def meta():
-        return ScanMetadata("compute", "esm",
-                            "Inventory of IP addresses",
-                            Severity.INFO,
-                            ["roles/iam.securityReviewer"])
+        return ScanMetadata(
+            "compute",
+            "esm",
+            "Inventory of IP addresses",
+            Severity.INFO,
+            ["roles/iam.securityReviewer"],
+        )
 
     def run(self, context: Context) -> Optional[Finding]:
         ip_addresses = set()
@@ -75,7 +81,7 @@ class IPAddressDump(Scan):
 
                 # funky control flow
                 for allow in firewall.allowed:
-                    if allow.ip_protocol in {'all', 'tcp'}:
+                    if allow.ip_protocol in {"all", "tcp"}:
                         break
                 else:
                     continue
@@ -117,8 +123,8 @@ class IPAddressDump(Scan):
                             in_rule = True
 
                         if in_rule:
-                            if rule.source_ranges and '0.0.0.0/0' in rule.source_ranges:
-                                print(f'Rule match: {rule}')
+                            if rule.source_ranges and "0.0.0.0/0" in rule.source_ranges:
+                                print(f"Rule match: {rule}")
                                 matching_rules.append(rule)
 
                     if interface.access_configs:
@@ -134,7 +140,6 @@ class IPAddressDump(Scan):
                     print(rule.target)
                     ip_addresses.add(IPAddress(rule.ip_address))
 
-
         ip_addresses = [addr for addr in ip_addresses if not addr.is_private()]
         ip_addresses = IPSet(ip_addresses)
 
@@ -146,6 +151,7 @@ class IPAddressDump(Scan):
         if ip_addresses:
             return self.finding(addresses=ranges)
 
+
 @scan
 class LoadBalancerTLSv1(Scan):
     @staticmethod
@@ -155,7 +161,7 @@ class LoadBalancerTLSv1(Scan):
             "tlsv1",
             "Load Balancers allow TLsv1.0 connections",
             Severity.LOW,
-            ["roles/iam.securityReviewer"]
+            ["roles/iam.securityReviewer"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:
@@ -169,8 +175,12 @@ class LoadBalancerTLSv1(Scan):
             project_policies = compute.ssl_policies.all(project.id, context.cache)
             project_rules = compute.forwarding_rules.all(project.id, context.cache)
 
-            policies_by_url: Dict[str, compute.ssl_policies.SslPolicy] = {p.self_link: p for p in project_policies}
-            rules_by_target: Dict[str, compute.forwarding_rules.ForwardingRule] = {r.target: r for r in project_rules}
+            policies_by_url: Dict[str, compute.ssl_policies.SslPolicy] = {
+                p.self_link: p for p in project_policies
+            }
+            rules_by_target: Dict[str, compute.forwarding_rules.ForwardingRule] = {
+                r.target: r for r in project_rules
+            }
 
             for proxy in compute.target_https_proxies.all(project.id, context.cache):
                 policy = proxy.ssl_policy
@@ -204,6 +214,7 @@ class LoadBalancerTLSv1(Scan):
         if instances:
             return self.finding(instances=instances)
 
+
 @scan
 class LoadBalancerHttp(Scan):
     @staticmethod
@@ -213,7 +224,7 @@ class LoadBalancerHttp(Scan):
             "http",
             "Load Balancers allow plaintext HTTP connections",
             Severity.LOW,
-            ["roles/iam.securityReviewer"]
+            ["roles/iam.securityReviewer"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:
@@ -226,7 +237,9 @@ class LoadBalancerHttp(Scan):
 
             project_rules = compute.forwarding_rules.all(project.id, context.cache)
 
-            rules_by_target: Dict[str, compute.forwarding_rules.ForwardingRule] = {r.target: r for r in project_rules}
+            rules_by_target: Dict[str, compute.forwarding_rules.ForwardingRule] = {
+                r.target: r for r in project_rules
+            }
 
             for proxy in compute.target_http_proxies.all(project.id, context.cache):
                 rule = rules_by_target.get(proxy.self_link)
@@ -240,18 +253,21 @@ class LoadBalancerHttp(Scan):
         if instances:
             return self.finding(instances=instances)
 
+
 @scan
 class InternalTrafficFirewall(Scan):
     @staticmethod
     def meta() -> ScanMetadata:
-        return ScanMetadata("compute", "firewall_internal",
-        "firewall_internal",
-        Severity.LOW,
-        ["roles/iam.securityReviewer"]
+        return ScanMetadata(
+            "compute",
+            "firewall_internal",
+            "firewall_internal",
+            Severity.LOW,
+            ["roles/iam.securityReviewer"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:
-        matches = {}        
+        matches = {}
 
         for project in context.projects:
 
@@ -269,12 +285,12 @@ class InternalTrafficFirewall(Scan):
                     continue
 
                 for item in firewall.allowed:
-                    if item.ports and ('0-65535' in item.ports or '1-65535' in item.ports):
+                    if item.ports and ("0-65535" in item.ports or "1-65535" in item.ports):
                         break
                 else:
                     continue
 
-                if '10.128.0.0/9' in firewall.source_ranges:
+                if "10.128.0.0/9" in firewall.source_ranges:
                     project_matches.append(firewall)
 
             if project_matches:
@@ -282,19 +298,18 @@ class InternalTrafficFirewall(Scan):
 
         if matches:
             return self.finding(instances=matches)
+
 
 @scan
 class FirewallAllowsRDP(Scan):
     @staticmethod
     def meta() -> ScanMetadata:
-        return ScanMetadata("compute", "firewall_rdp",
-        "firewall_rdp",
-        Severity.LOW,
-        ["roles/iam.securityReviewer"]
+        return ScanMetadata(
+            "compute", "firewall_rdp", "firewall_rdp", Severity.LOW, ["roles/iam.securityReviewer"]
         )
 
     def run(self, context: Context) -> Optional[Finding]:
-        matches = {}        
+        matches = {}
 
         for project in context.projects:
 
@@ -305,7 +320,7 @@ class FirewallAllowsRDP(Scan):
                 if firewall.disabled:
                     continue
 
-                if firewall.name == 'default-allow-rdp':
+                if firewall.name == "default-allow-rdp":
                     project_matches.append(firewall)
 
             if project_matches:
@@ -314,18 +329,17 @@ class FirewallAllowsRDP(Scan):
         if matches:
             return self.finding(instances=matches)
 
+
 @scan
 class FirewallAllowsSSH(Scan):
     @staticmethod
     def meta() -> ScanMetadata:
-        return ScanMetadata("compute", "firewall_ssh",
-        "firewall_ssh",
-        Severity.LOW,
-        ["roles/iam.securityReviewer"]
+        return ScanMetadata(
+            "compute", "firewall_ssh", "firewall_ssh", Severity.LOW, ["roles/iam.securityReviewer"]
         )
 
     def run(self, context: Context) -> Optional[Finding]:
-        matches = {}        
+        matches = {}
 
         for project in context.projects:
 
@@ -336,7 +350,7 @@ class FirewallAllowsSSH(Scan):
                 if firewall.disabled:
                     continue
 
-                if firewall.name == 'default-allow-ssh':
+                if firewall.name == "default-allow-ssh":
                     project_matches.append(firewall)
 
             if project_matches:
@@ -354,13 +368,11 @@ class Something(Scan):
 
     @staticmethod
     def meta():
-        return ScanMetadata("compute", "name",
-                            "",
-                            Severity.HIGH,
-                            ["roles/iam.securityReviewer"])
+        return ScanMetadata("compute", "name", "", Severity.HIGH, ["roles/iam.securityReviewer"])
 
     def run(self, context: Context) -> Optional[Finding]:
         return None
+
 
 # @scan
 # class Something(Scan):

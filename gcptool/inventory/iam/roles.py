@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List, Set, Optional
+from typing import Any, List, Optional, Set
 
 from ..cache import Cache, with_cache
 from . import api

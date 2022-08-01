@@ -1,5 +1,6 @@
-from gcptool.creds import credentials
 from googleapiclient.discovery import build
+
+from gcptool.creds import credentials
 
 client = build("bigquery", "v2", credentials=credentials)
 

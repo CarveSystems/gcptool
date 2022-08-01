@@ -2,7 +2,7 @@
 
 {% block body %}
 
-Several projects have firewall rules that allow ssh access from the Internet. 
+Several projects have firewall rules that allow ssh access from the Internet.
 
 In general, access to internal resources and administrative interfaces should be restricted to %{client}-controlled networks. The following %{app} projects have firewall rules that allow ssh access on port 22 from any IP (source range 0.0.0.0/0):
 

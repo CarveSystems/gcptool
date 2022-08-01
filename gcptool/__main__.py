@@ -2,9 +2,8 @@ import argparse
 import os
 from pathlib import Path
 
-from .inventory.resourcemanager import projects
 from .inventory.cache import Cache
-
+from .inventory.resourcemanager import projects
 from .scanner import Scanner
 from .scanner.context import Context
 from .scanner.finding import Severity
@@ -85,9 +84,9 @@ parser_scan.add_argument(
 )
 parser_scan.add_argument(
     "--cache-only",
-    help='If enabled, do not make any outbound API requests. Only analyze existing, cached data.',
+    help="If enabled, do not make any outbound API requests. Only analyze existing, cached data.",
     type=bool,
-    default=False
+    default=False,
 )
 parser_scan.set_defaults(func=scan)
 

@@ -1,10 +1,9 @@
-from typing import List, Dict, Any, Optional
-
-from gcptool.scanner.finding import Finding, Severity
-from gcptool.scanner.scan import Scan, ScanMetadata, scan
-from gcptool.scanner.context import Context
+from typing import Any, Dict, List, Optional
 
 from gcptool.inventory.sql import instances
+from gcptool.scanner.context import Context
+from gcptool.scanner.finding import Finding, Severity
+from gcptool.scanner.scan import Scan, ScanMetadata, scan
 
 
 @scan

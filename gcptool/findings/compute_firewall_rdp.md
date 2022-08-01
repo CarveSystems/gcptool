@@ -2,7 +2,7 @@
 
 {% block body %}
 
-Several projects have firewall rules that allow Microsoft Remote Desktop Protocol (RDP) access from the Internet. 
+Several projects have firewall rules that allow Microsoft Remote Desktop Protocol (RDP) access from the Internet.
 
 In general, access to internal resources and administrative interfaces should be restricted to %{client}-controlled networks. The following %{app} projects have firewall rules that allow RDP access on port 3389 from any IP (source range 0.0.0.0/0):
 

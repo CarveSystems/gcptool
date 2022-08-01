@@ -1,7 +1,6 @@
-from typing import Dict, Any, Optional, Callable
-from pathlib import Path
-
 import json
+from pathlib import Path
+from typing import Any, Callable, Dict, Optional
 
 
 class Cache:
@@ -11,7 +10,7 @@ class Cache:
 
     VERSION = 1
 
-    def __init__(self, filename: Path, force : bool = False):
+    def __init__(self, filename: Path, force: bool = False):
         self.filename = filename
         self.force = force
 
@@ -40,14 +39,14 @@ class Cache:
 
         if not service_data:
             if self.force:
-                raise IndexError(f'Cache-only mode requested, but {service} not found')
+                raise IndexError(f"Cache-only mode requested, but {service} not found")
             return None
 
         resource_data = service_data.get(resource)
 
         if not resource_data:
             if self.force:
-                raise IndexError(f'Cache-only mode requested, but {service}:{resource} not found')
+                raise IndexError(f"Cache-only mode requested, but {service}:{resource} not found")
             return None
 
         return resource_data.get(project)

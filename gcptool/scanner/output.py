@@ -1,5 +1,5 @@
-from typing import List
 from pathlib import Path
+from typing import List
 
 from jinja2 import Environment, PackageLoader
 

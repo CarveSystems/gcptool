@@ -2,8 +2,8 @@ from typing import Any, List
 
 from ..cache import Cache, with_cache
 from . import api
-
 from .types import GoogleApiServiceusageV1Service
+
 
 @with_cache("serviceusage", "services")
 def _all(project_id: str) -> List[Any]:
@@ -26,8 +26,9 @@ def _all(project_id: str) -> List[Any]:
         response = request.execute()
         services.extend(response.get("services", []))
         request = api.services.list_next(request, response)
-    
+
     return services
+
 
 def all(project_id: str, cache: Cache) -> List[GoogleApiServiceusageV1Service]:
     """

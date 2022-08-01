@@ -17,25 +17,25 @@ class UndeleteServiceAccountRequest(BaseModel):
 class SignBlobResponse(BaseModel):
     signature: Optional[str] = Field(
         None,
-        description='Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The signed blob.',
+        description="Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The signed blob.",
     )
     key_id: Optional[str] = Field(
         None,
-        alias='keyId',
-        description='Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The id of the key used to sign the blob.',
+        alias="keyId",
+        description="Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The id of the key used to sign the blob.",
     )
 
 
 class Oidc(BaseModel):
     allowed_audiences: Optional[List[str]] = Field(
         None,
-        alias='allowedAudiences',
-        description='Acceptable values for the `aud` field (audience) in the OIDC token. Token exchange requests are rejected if the token audience does not match one of the configured values. Each audience may be at most 256 characters. A maximum of 10 audiences may be configured. If this list is empty, the OIDC token audience must be equal to the full canonical resource name of the WorkloadIdentityPoolProvider, with or without the HTTPS prefix. For example: ``` //iam.googleapis.com/projects//locations//workloadIdentityPools//providers/ https://iam.googleapis.com/projects//locations//workloadIdentityPools//providers/ ```',
+        alias="allowedAudiences",
+        description="Acceptable values for the `aud` field (audience) in the OIDC token. Token exchange requests are rejected if the token audience does not match one of the configured values. Each audience may be at most 256 characters. A maximum of 10 audiences may be configured. If this list is empty, the OIDC token audience must be equal to the full canonical resource name of the WorkloadIdentityPoolProvider, with or without the HTTPS prefix. For example: ``` //iam.googleapis.com/projects//locations//workloadIdentityPools//providers/ https://iam.googleapis.com/projects//locations//workloadIdentityPools//providers/ ```",
     )
     issuer_uri: Optional[str] = Field(
         None,
-        alias='issuerUri',
-        description='Required. The OIDC issuer URL. Must be an HTTPS endpoint.',
+        alias="issuerUri",
+        description="Required. The OIDC issuer URL. Must be an HTTPS endpoint.",
     )
 
 
@@ -50,31 +50,31 @@ class DisableServiceAccountRequest(BaseModel):
 class Expr(BaseModel):
     location: Optional[str] = Field(
         None,
-        description='Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.',
+        description="Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.",
     )
     expression: Optional[str] = Field(
         None,
-        description='Textual representation of an expression in Common Expression Language syntax.',
+        description="Textual representation of an expression in Common Expression Language syntax.",
     )
     title: Optional[str] = Field(
         None,
-        description='Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.',
+        description="Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.",
     )
     description: Optional[str] = Field(
         None,
-        description='Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.',
+        description="Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.",
     )
 
 
 class State(Enum):
-    state_unspecified = 'STATE_UNSPECIFIED'
-    active = 'ACTIVE'
-    deleted = 'DELETED'
+    state_unspecified = "STATE_UNSPECIFIED"
+    active = "ACTIVE"
+    deleted = "DELETED"
 
 
 class Aws(BaseModel):
     account_id: Optional[str] = Field(
-        None, alias='accountId', description='Required. The AWS account ID.'
+        None, alias="accountId", description="Required. The AWS account ID."
     )
 
 
@@ -83,41 +83,39 @@ class UndeleteWorkloadIdentityPoolProviderRequest(BaseModel):
 
 
 class Stage(Enum):
-    alpha = 'ALPHA'
-    beta = 'BETA'
-    ga = 'GA'
-    deprecated = 'DEPRECATED'
-    disabled = 'DISABLED'
-    eap = 'EAP'
+    alpha = "ALPHA"
+    beta = "BETA"
+    ga = "GA"
+    deprecated = "DEPRECATED"
+    disabled = "DISABLED"
+    eap = "EAP"
 
 
 class Role(BaseModel):
-    etag: Optional[str] = Field(
-        None, description='Used to perform a consistent read-modify-write.'
-    )
+    etag: Optional[str] = Field(None, description="Used to perform a consistent read-modify-write.")
     description: Optional[str] = Field(
-        None, description='Optional. A human-readable description for the role.'
+        None, description="Optional. A human-readable description for the role."
     )
     included_permissions: Optional[List[str]] = Field(
         None,
-        alias='includedPermissions',
-        description='The names of the permissions this role grants when bound in an IAM policy.',
+        alias="includedPermissions",
+        description="The names of the permissions this role grants when bound in an IAM policy.",
     )
     stage: Optional[Stage] = Field(
         None,
-        description='The current launch stage of the role. If the `ALPHA` launch stage has been selected for a role, the `stage` field will not be included in the returned definition for the role.',
+        description="The current launch stage of the role. If the `ALPHA` launch stage has been selected for a role, the `stage` field will not be included in the returned definition for the role.",
     )
     title: Optional[str] = Field(
         None,
-        description='Optional. A human-readable title for the role. Typically this is limited to 100 UTF-8 bytes.',
+        description="Optional. A human-readable title for the role. Typically this is limited to 100 UTF-8 bytes.",
     )
     deleted: Optional[bool] = Field(
         None,
-        description='The current deleted state of the role. This field is read only. It will be ignored in calls to CreateRole and UpdateRole.',
+        description="The current deleted state of the role. This field is read only. It will be ignored in calls to CreateRole and UpdateRole.",
     )
     name: Optional[str] = Field(
         None,
-        description='The name of the role. When Role is used in CreateRole, the role name must not be set. When Role is used in output and other input such as UpdateRole, the role name is the complete path, e.g., roles/logging.viewer for predefined roles and organizations/{ORGANIZATION_ID}/roles/logging.viewer for custom roles.',
+        description="The name of the role. When Role is used in CreateRole, the role name must not be set. When Role is used in output and other input such as UpdateRole, the role name is the complete path, e.g., roles/logging.viewer for predefined roles and organizations/{ORGANIZATION_ID}/roles/logging.viewer for custom roles.",
     )
 
 
@@ -131,56 +129,56 @@ class SignJwtRequest(BaseModel):
 class ServiceAccount(BaseModel):
     oauth2_client_id: Optional[str] = Field(
         None,
-        alias='oauth2ClientId',
-        description='Output only. The OAuth 2.0 client ID for the service account.',
+        alias="oauth2ClientId",
+        description="Output only. The OAuth 2.0 client ID for the service account.",
     )
     email: Optional[str] = Field(
-        None, description='Output only. The email address of the service account.'
+        None, description="Output only. The email address of the service account."
     )
     project_id: Optional[str] = Field(
         None,
-        alias='projectId',
-        description='Output only. The ID of the project that owns the service account.',
+        alias="projectId",
+        description="Output only. The ID of the project that owns the service account.",
     )
     disabled: Optional[bool] = Field(
-        None, description='Output only. Whether the service account is disabled.'
+        None, description="Output only. Whether the service account is disabled."
     )
     display_name: Optional[str] = Field(
         None,
-        alias='displayName',
-        description='Optional. A user-specified, human-readable name for the service account. The maximum length is 100 UTF-8 bytes.',
+        alias="displayName",
+        description="Optional. A user-specified, human-readable name for the service account. The maximum length is 100 UTF-8 bytes.",
     )
     name: Optional[str] = Field(
         None,
-        description='The resource name of the service account. Use one of the following formats: * `projects/{PROJECT_ID}/serviceAccounts/{EMAIL_ADDRESS}` * `projects/{PROJECT_ID}/serviceAccounts/{UNIQUE_ID}` As an alternative, you can use the `-` wildcard character instead of the project ID: * `projects/-/serviceAccounts/{EMAIL_ADDRESS}` * `projects/-/serviceAccounts/{UNIQUE_ID}` When possible, avoid using the `-` wildcard character, because it can cause response messages to contain misleading error codes. For example, if you try to get the service account `projects/-/serviceAccounts/fake@example.com`, which does not exist, the response contains an HTTP `403 Forbidden` error instead of a `404 Not Found` error.',
+        description="The resource name of the service account. Use one of the following formats: * `projects/{PROJECT_ID}/serviceAccounts/{EMAIL_ADDRESS}` * `projects/{PROJECT_ID}/serviceAccounts/{UNIQUE_ID}` As an alternative, you can use the `-` wildcard character instead of the project ID: * `projects/-/serviceAccounts/{EMAIL_ADDRESS}` * `projects/-/serviceAccounts/{UNIQUE_ID}` When possible, avoid using the `-` wildcard character, because it can cause response messages to contain misleading error codes. For example, if you try to get the service account `projects/-/serviceAccounts/fake@example.com`, which does not exist, the response contains an HTTP `403 Forbidden` error instead of a `404 Not Found` error.",
     )
     unique_id: Optional[str] = Field(
         None,
-        alias='uniqueId',
-        description='Output only. The unique, stable numeric ID for the service account. Each service account retains its unique ID even if you delete the service account. For example, if you delete a service account, then create a new service account with the same name, the new service account has a different unique ID than the deleted service account.',
+        alias="uniqueId",
+        description="Output only. The unique, stable numeric ID for the service account. Each service account retains its unique ID even if you delete the service account. For example, if you delete a service account, then create a new service account with the same name, the new service account has a different unique ID than the deleted service account.",
     )
     description: Optional[str] = Field(
         None,
-        description='Optional. A user-specified, human-readable description of the service account. The maximum length is 256 UTF-8 bytes.',
+        description="Optional. A user-specified, human-readable description of the service account. The maximum length is 256 UTF-8 bytes.",
     )
-    etag: Optional[str] = Field(None, description='Deprecated. Do not use.')
+    etag: Optional[str] = Field(None, description="Deprecated. Do not use.")
 
 
 class LogType(Enum):
-    log_type_unspecified = 'LOG_TYPE_UNSPECIFIED'
-    admin_read = 'ADMIN_READ'
-    data_write = 'DATA_WRITE'
-    data_read = 'DATA_READ'
+    log_type_unspecified = "LOG_TYPE_UNSPECIFIED"
+    admin_read = "ADMIN_READ"
+    data_write = "DATA_WRITE"
+    data_read = "DATA_READ"
 
 
 class AuditLogConfig(BaseModel):
     exempted_members: Optional[List[str]] = Field(
         None,
-        alias='exemptedMembers',
-        description='Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.',
+        alias="exemptedMembers",
+        description="Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.",
     )
     log_type: Optional[LogType] = Field(
-        None, alias='logType', description='The log type that this config enables.'
+        None, alias="logType", description="The log type that this config enables."
     )
 
 
@@ -194,20 +192,20 @@ class AuditableService(BaseModel):
 class TestIamPermissionsResponse(BaseModel):
     permissions: Optional[List[str]] = Field(
         None,
-        description='A subset of `TestPermissionsRequest.permissions` that the caller is allowed.',
+        description="A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
     )
 
 
 class SignJwtResponse(BaseModel):
     signed_jwt: Optional[str] = Field(
         None,
-        alias='signedJwt',
-        description='Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The signed JWT.',
+        alias="signedJwt",
+        description="Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The signed JWT.",
     )
     key_id: Optional[str] = Field(
         None,
-        alias='keyId',
-        description='Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The id of the key used to sign the JWT.',
+        alias="keyId",
+        description="Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The id of the key used to sign the JWT.",
     )
 
 
@@ -221,354 +219,338 @@ class TestIamPermissionsRequest(BaseModel):
 class QueryAuditableServicesRequest(BaseModel):
     full_resource_name: Optional[str] = Field(
         None,
-        alias='fullResourceName',
-        description='Required. The full resource name to query from the list of auditable services. The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.',
+        alias="fullResourceName",
+        description="Required. The full resource name to query from the list of auditable services. The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
     )
 
 
 class Action(Enum):
-    action_unspecified = 'ACTION_UNSPECIFIED'
-    add = 'ADD'
-    remove = 'REMOVE'
+    action_unspecified = "ACTION_UNSPECIFIED"
+    add = "ADD"
+    remove = "REMOVE"
 
 
 class BindingDelta(BaseModel):
     member: Optional[str] = Field(
         None,
-        description='A single identity requesting access for a Cloud Platform resource. Follows the same format of Binding.members. Required',
+        description="A single identity requesting access for a Cloud Platform resource. Follows the same format of Binding.members. Required",
     )
     role: Optional[str] = Field(
         None,
-        description='Role that is assigned to `members`. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. Required',
+        description="Role that is assigned to `members`. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. Required",
     )
     condition: Optional[Expr] = Field(
-        None, description='The condition that is associated with this binding.'
+        None, description="The condition that is associated with this binding."
     )
     action: Optional[Action] = Field(
-        None, description='The action that was performed on a Binding. Required'
+        None, description="The action that was performed on a Binding. Required"
     )
 
 
 class Severity(Enum):
-    severity_unspecified = 'SEVERITY_UNSPECIFIED'
-    error = 'ERROR'
-    warning = 'WARNING'
-    notice = 'NOTICE'
-    info = 'INFO'
-    deprecated = 'DEPRECATED'
+    severity_unspecified = "SEVERITY_UNSPECIFIED"
+    error = "ERROR"
+    warning = "WARNING"
+    notice = "NOTICE"
+    info = "INFO"
+    deprecated = "DEPRECATED"
 
 
 class Level(Enum):
-    level_unspecified = 'LEVEL_UNSPECIFIED'
-    condition = 'CONDITION'
+    level_unspecified = "LEVEL_UNSPECIFIED"
+    condition = "CONDITION"
 
 
 class LintResult(BaseModel):
     location_offset: Optional[int] = Field(
         None,
-        alias='locationOffset',
-        description='0-based character position of problematic construct within the object identified by `field_name`. Currently, this is populated only for condition expression.',
+        alias="locationOffset",
+        description="0-based character position of problematic construct within the object identified by `field_name`. Currently, this is populated only for condition expression.",
     )
-    severity: Optional[Severity] = Field(
-        None, description='The validation unit severity.'
-    )
-    level: Optional[Level] = Field(None, description='The validation unit level.')
+    severity: Optional[Severity] = Field(None, description="The validation unit severity.")
+    level: Optional[Level] = Field(None, description="The validation unit level.")
     field_name: Optional[str] = Field(
         None,
-        alias='fieldName',
-        description='The name of the field for which this lint result is about. For nested messages `field_name` consists of names of the embedded fields separated by period character. The top-level qualifier is the input object to lint in the request. For example, the `field_name` value `condition.expression` identifies a lint result for the `expression` field of the provided condition.',
+        alias="fieldName",
+        description="The name of the field for which this lint result is about. For nested messages `field_name` consists of names of the embedded fields separated by period character. The top-level qualifier is the input object to lint in the request. For example, the `field_name` value `condition.expression` identifies a lint result for the `expression` field of the provided condition.",
     )
     debug_message: Optional[str] = Field(
         None,
-        alias='debugMessage',
-        description='Human readable debug message associated with the issue.',
+        alias="debugMessage",
+        description="Human readable debug message associated with the issue.",
     )
     validation_unit_name: Optional[str] = Field(
         None,
-        alias='validationUnitName',
+        alias="validationUnitName",
         description='The validation unit name, for instance "lintValidationUnits/ConditionComplexityCheck".',
     )
 
 
 class KeyAlgorithm(Enum):
-    key_alg_unspecified = 'KEY_ALG_UNSPECIFIED'
-    key_alg_rsa_1024 = 'KEY_ALG_RSA_1024'
-    key_alg_rsa_2048 = 'KEY_ALG_RSA_2048'
+    key_alg_unspecified = "KEY_ALG_UNSPECIFIED"
+    key_alg_rsa_1024 = "KEY_ALG_RSA_1024"
+    key_alg_rsa_2048 = "KEY_ALG_RSA_2048"
 
 
 class KeyOrigin(Enum):
-    origin_unspecified = 'ORIGIN_UNSPECIFIED'
-    user_provided = 'USER_PROVIDED'
-    google_provided = 'GOOGLE_PROVIDED'
+    origin_unspecified = "ORIGIN_UNSPECIFIED"
+    user_provided = "USER_PROVIDED"
+    google_provided = "GOOGLE_PROVIDED"
 
 
 class KeyType(Enum):
-    key_type_unspecified = 'KEY_TYPE_UNSPECIFIED'
-    user_managed = 'USER_MANAGED'
-    system_managed = 'SYSTEM_MANAGED'
+    key_type_unspecified = "KEY_TYPE_UNSPECIFIED"
+    user_managed = "USER_MANAGED"
+    system_managed = "SYSTEM_MANAGED"
 
 
 class PrivateKeyType(Enum):
-    type_unspecified = 'TYPE_UNSPECIFIED'
-    type_pkcs12_file = 'TYPE_PKCS12_FILE'
-    type_google_credentials_file = 'TYPE_GOOGLE_CREDENTIALS_FILE'
+    type_unspecified = "TYPE_UNSPECIFIED"
+    type_pkcs12_file = "TYPE_PKCS12_FILE"
+    type_google_credentials_file = "TYPE_GOOGLE_CREDENTIALS_FILE"
 
 
 class ServiceAccountKey(BaseModel):
     valid_before_time: Optional[str] = Field(
         None,
-        alias='validBeforeTime',
-        description='The key can be used before this timestamp. For system-managed key pairs, this timestamp is the end time for the private key signing operation. The public key could still be used for verification for a few hours after this time.',
+        alias="validBeforeTime",
+        description="The key can be used before this timestamp. For system-managed key pairs, this timestamp is the end time for the private key signing operation. The public key could still be used for verification for a few hours after this time.",
     )
     name: Optional[str] = Field(
         None,
-        description='The resource name of the service account key in the following format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.',
+        description="The resource name of the service account key in the following format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.",
     )
-    disabled: Optional[bool] = Field(None, description='The key status.')
+    disabled: Optional[bool] = Field(None, description="The key status.")
     private_key_data: Optional[str] = Field(
         None,
-        alias='privateKeyData',
-        description='The private key data. Only provided in `CreateServiceAccountKey` responses. Make sure to keep the private key data secure because it allows for the assertion of the service account identity. When base64 decoded, the private key data can be used to authenticate with Google API client libraries and with gcloud auth activate-service-account.',
+        alias="privateKeyData",
+        description="The private key data. Only provided in `CreateServiceAccountKey` responses. Make sure to keep the private key data secure because it allows for the assertion of the service account identity. When base64 decoded, the private key data can be used to authenticate with Google API client libraries and with gcloud auth activate-service-account.",
     )
     key_algorithm: Optional[KeyAlgorithm] = Field(
         None,
-        alias='keyAlgorithm',
-        description='Specifies the algorithm (and possibly key size) for the key.',
+        alias="keyAlgorithm",
+        description="Specifies the algorithm (and possibly key size) for the key.",
     )
-    key_origin: Optional[KeyOrigin] = Field(
-        None, alias='keyOrigin', description='The key origin.'
-    )
+    key_origin: Optional[KeyOrigin] = Field(None, alias="keyOrigin", description="The key origin.")
     valid_after_time: Optional[str] = Field(
         None,
-        alias='validAfterTime',
-        description='The key can be used after this timestamp.',
+        alias="validAfterTime",
+        description="The key can be used after this timestamp.",
     )
-    key_type: Optional[KeyType] = Field(
-        None, alias='keyType', description='The key type.'
-    )
+    key_type: Optional[KeyType] = Field(None, alias="keyType", description="The key type.")
     private_key_type: Optional[PrivateKeyType] = Field(
         None,
-        alias='privateKeyType',
-        description='The output format for the private key. Only provided in `CreateServiceAccountKey` responses, not in `GetServiceAccountKey` or `ListServiceAccountKey` responses. Google never exposes system-managed private keys, and never retains user-managed private keys.',
+        alias="privateKeyType",
+        description="The output format for the private key. Only provided in `CreateServiceAccountKey` responses, not in `GetServiceAccountKey` or `ListServiceAccountKey` responses. Google never exposes system-managed private keys, and never retains user-managed private keys.",
     )
     public_key_data: Optional[str] = Field(
         None,
-        alias='publicKeyData',
-        description='The public key data. Only provided in `GetServiceAccountKey` responses.',
+        alias="publicKeyData",
+        description="The public key data. Only provided in `GetServiceAccountKey` responses.",
     )
 
 
 class QueryGrantableRolesResponse(BaseModel):
-    roles: Optional[List[Role]] = Field(None, description='The list of matching roles.')
+    roles: Optional[List[Role]] = Field(None, description="The list of matching roles.")
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='To retrieve the next page of results, set `QueryGrantableRolesRequest.page_token` to this value.',
+        alias="nextPageToken",
+        description="To retrieve the next page of results, set `QueryGrantableRolesRequest.page_token` to this value.",
     )
 
 
 class QueryTestablePermissionsRequest(BaseModel):
     full_resource_name: Optional[str] = Field(
         None,
-        alias='fullResourceName',
-        description='Required. The full resource name to query from the list of testable permissions. The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.',
+        alias="fullResourceName",
+        description="Required. The full resource name to query from the list of testable permissions. The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
     )
     page_size: Optional[int] = Field(
         None,
-        alias='pageSize',
-        description='Optional limit on the number of permissions to include in the response. The default is 100, and the maximum is 1,000.',
+        alias="pageSize",
+        description="Optional limit on the number of permissions to include in the response. The default is 100, and the maximum is 1,000.",
     )
     page_token: Optional[str] = Field(
         None,
-        alias='pageToken',
-        description='Optional pagination token returned in an earlier QueryTestablePermissionsRequest.',
+        alias="pageToken",
+        description="Optional pagination token returned in an earlier QueryTestablePermissionsRequest.",
     )
 
 
 class CreateServiceAccountRequest(BaseModel):
     account_id: Optional[str] = Field(
         None,
-        alias='accountId',
-        description='Required. The account id that is used to generate the service account email address and a stable unique id. It is unique within a project, must be 6-30 characters long, and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])` to comply with RFC1035.',
+        alias="accountId",
+        description="Required. The account id that is used to generate the service account email address and a stable unique id. It is unique within a project, must be 6-30 characters long, and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])` to comply with RFC1035.",
     )
     service_account: Optional[ServiceAccount] = Field(
         None,
-        alias='serviceAccount',
-        description='The ServiceAccount resource to create. Currently, only the following values are user assignable: `display_name` and `description`.',
+        alias="serviceAccount",
+        description="The ServiceAccount resource to create. Currently, only the following values are user assignable: `display_name` and `description`.",
     )
 
 
 class WorkloadIdentityPool(BaseModel):
     description: Optional[str] = Field(
-        None, description='A description of the pool. Cannot exceed 256 characters.'
+        None, description="A description of the pool. Cannot exceed 256 characters."
     )
-    name: Optional[str] = Field(
-        None, description='Output only. The resource name of the pool.'
-    )
+    name: Optional[str] = Field(None, description="Output only. The resource name of the pool.")
     disabled: Optional[bool] = Field(
         None,
-        description='Whether the pool is disabled. You cannot use a disabled pool to exchange tokens, or use existing tokens to access resources. If the pool is re-enabled, existing tokens grant access again.',
+        description="Whether the pool is disabled. You cannot use a disabled pool to exchange tokens, or use existing tokens to access resources. If the pool is re-enabled, existing tokens grant access again.",
     )
-    state: Optional[State] = Field(
-        None, description='Output only. The state of the pool.'
-    )
+    state: Optional[State] = Field(None, description="Output only. The state of the pool.")
     display_name: Optional[str] = Field(
         None,
-        alias='displayName',
-        description='A display name for the pool. Cannot exceed 32 characters.',
+        alias="displayName",
+        description="A display name for the pool. Cannot exceed 32 characters.",
     )
 
 
 class CustomRolesSupportLevel(Enum):
-    supported = 'SUPPORTED'
-    testing = 'TESTING'
-    not_supported = 'NOT_SUPPORTED'
+    supported = "SUPPORTED"
+    testing = "TESTING"
+    not_supported = "NOT_SUPPORTED"
 
 
 class Stage1(Enum):
-    alpha = 'ALPHA'
-    beta = 'BETA'
-    ga = 'GA'
-    deprecated = 'DEPRECATED'
+    alpha = "ALPHA"
+    beta = "BETA"
+    ga = "GA"
+    deprecated = "DEPRECATED"
 
 
 class Permission(BaseModel):
-    only_in_predefined_roles: Optional[bool] = Field(
-        None, alias='onlyInPredefinedRoles'
-    )
+    only_in_predefined_roles: Optional[bool] = Field(None, alias="onlyInPredefinedRoles")
     custom_roles_support_level: Optional[CustomRolesSupportLevel] = Field(
         None,
-        alias='customRolesSupportLevel',
-        description='The current custom role support level.',
+        alias="customRolesSupportLevel",
+        description="The current custom role support level.",
     )
-    stage: Optional[Stage1] = Field(
-        None, description='The current launch stage of the permission.'
-    )
+    stage: Optional[Stage1] = Field(None, description="The current launch stage of the permission.")
     primary_permission: Optional[str] = Field(
         None,
-        alias='primaryPermission',
-        description='The preferred name for this permission. If present, then this permission is an alias of, and equivalent to, the listed primary_permission.',
+        alias="primaryPermission",
+        description="The preferred name for this permission. If present, then this permission is an alias of, and equivalent to, the listed primary_permission.",
     )
     description: Optional[str] = Field(
         None,
-        description='A brief description of what this Permission is used for. This permission can ONLY be used in predefined roles.',
+        description="A brief description of what this Permission is used for. This permission can ONLY be used in predefined roles.",
     )
-    title: Optional[str] = Field(None, description='The title of this Permission.')
+    title: Optional[str] = Field(None, description="The title of this Permission.")
     api_disabled: Optional[bool] = Field(
         None,
-        alias='apiDisabled',
-        description='The service API associated with the permission is not enabled.',
+        alias="apiDisabled",
+        description="The service API associated with the permission is not enabled.",
     )
-    name: Optional[str] = Field(None, description='The name of this Permission.')
+    name: Optional[str] = Field(None, description="The name of this Permission.")
 
 
 class CreateServiceAccountKeyRequest(BaseModel):
     private_key_type: Optional[PrivateKeyType] = Field(
         None,
-        alias='privateKeyType',
-        description='The output format of the private key. The default value is `TYPE_GOOGLE_CREDENTIALS_FILE`, which is the Google Credentials File format.',
+        alias="privateKeyType",
+        description="The output format of the private key. The default value is `TYPE_GOOGLE_CREDENTIALS_FILE`, which is the Google Credentials File format.",
     )
     key_algorithm: Optional[KeyAlgorithm] = Field(
         None,
-        alias='keyAlgorithm',
-        description='Which type of key and algorithm to use for the key. The default is currently a 2K RSA key. However this may change in the future.',
+        alias="keyAlgorithm",
+        description="Which type of key and algorithm to use for the key. The default is currently a 2K RSA key. However this may change in the future.",
     )
 
 
 class QueryTestablePermissionsResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='To retrieve the next page of results, set `QueryTestableRolesRequest.page_token` to this value.',
+        alias="nextPageToken",
+        description="To retrieve the next page of results, set `QueryTestableRolesRequest.page_token` to this value.",
     )
     permissions: Optional[List[Permission]] = Field(
-        None, description='The Permissions testable on the requested resource.'
+        None, description="The Permissions testable on the requested resource."
     )
 
 
 class PolicyDelta(BaseModel):
     binding_deltas: Optional[List[BindingDelta]] = Field(
         None,
-        alias='bindingDeltas',
-        description='The delta for Bindings between two policies.',
+        alias="bindingDeltas",
+        description="The delta for Bindings between two policies.",
     )
 
 
 class UndeleteServiceAccountResponse(BaseModel):
     restored_account: Optional[ServiceAccount] = Field(
         None,
-        alias='restoredAccount',
-        description='Metadata for the restored service account.',
+        alias="restoredAccount",
+        description="Metadata for the restored service account.",
     )
 
 
 class UndeleteRoleRequest(BaseModel):
-    etag: Optional[str] = Field(
-        None, description='Used to perform a consistent read-modify-write.'
-    )
+    etag: Optional[str] = Field(None, description="Used to perform a consistent read-modify-write.")
 
 
 class Status(BaseModel):
     details: Optional[List[Dict[str, Dict[str, Any]]]] = Field(
         None,
-        description='A list of messages that carry the error details. There is a common set of message types for APIs to use.',
+        description="A list of messages that carry the error details. There is a common set of message types for APIs to use.",
     )
     message: Optional[str] = Field(
         None,
-        description='A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.',
+        description="A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
     )
     code: Optional[int] = Field(
         None,
-        description='The status code, which should be an enum value of google.rpc.Code.',
+        description="The status code, which should be an enum value of google.rpc.Code.",
     )
 
 
 class UploadServiceAccountKeyRequest(BaseModel):
     public_key_data: Optional[str] = Field(
         None,
-        alias='publicKeyData',
-        description='A field that allows clients to upload their own public key. If set, use this public key data to create a service account key for given service account. Please note, the expected format for this field is X509_PEM.',
+        alias="publicKeyData",
+        description="A field that allows clients to upload their own public key. If set, use this public key data to create a service account key for given service account. Please note, the expected format for this field is X509_PEM.",
     )
 
 
 class LintPolicyResponse(BaseModel):
     lint_results: Optional[List[LintResult]] = Field(
         None,
-        alias='lintResults',
-        description='List of lint results sorted by `severity` in descending order.',
+        alias="lintResults",
+        description="List of lint results sorted by `severity` in descending order.",
     )
 
 
 class CreateRoleRequest(BaseModel):
-    role: Optional[Role] = Field(None, description='The Role resource to create.')
+    role: Optional[Role] = Field(None, description="The Role resource to create.")
     role_id: Optional[str] = Field(
         None,
-        alias='roleId',
-        description='The role ID to use for this role. A role ID may contain alphanumeric characters, underscores (`_`), and periods (`.`). It must contain a minimum of 3 characters and a maximum of 64 characters.',
+        alias="roleId",
+        description="The role ID to use for this role. A role ID may contain alphanumeric characters, underscores (`_`), and periods (`.`). It must contain a minimum of 3 characters and a maximum of 64 characters.",
     )
 
 
 class View(Enum):
-    basic = 'BASIC'
-    full = 'FULL'
+    basic = "BASIC"
+    full = "FULL"
 
 
 class QueryGrantableRolesRequest(BaseModel):
     page_size: Optional[int] = Field(
         None,
-        alias='pageSize',
-        description='Optional limit on the number of roles to include in the response. The default is 300, and the maximum is 1,000.',
+        alias="pageSize",
+        description="Optional limit on the number of roles to include in the response. The default is 300, and the maximum is 1,000.",
     )
     view: Optional[View] = None
     page_token: Optional[str] = Field(
         None,
-        alias='pageToken',
-        description='Optional pagination token returned in an earlier QueryGrantableRolesResponse.',
+        alias="pageToken",
+        description="Optional pagination token returned in an earlier QueryGrantableRolesResponse.",
     )
     full_resource_name: Optional[str] = Field(
         None,
-        alias='fullResourceName',
-        description='Required. The full resource name to query from the list of grantable roles. The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.',
+        alias="fullResourceName",
+        description="Required. The full resource name to query from the list of grantable roles. The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
     )
 
 
@@ -583,11 +565,11 @@ class DisableServiceAccountKeyRequest(BaseModel):
 class ListServiceAccountsResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='To retrieve the next page of results, set ListServiceAccountsRequest.page_token to this value.',
+        alias="nextPageToken",
+        description="To retrieve the next page of results, set ListServiceAccountsRequest.page_token to this value.",
     )
     accounts: Optional[List[ServiceAccount]] = Field(
-        None, description='The list of matching service accounts.'
+        None, description="The list of matching service accounts."
     )
 
 
@@ -601,345 +583,315 @@ class UndeleteWorkloadIdentityPoolRequest(BaseModel):
 
 class PermissionDelta(BaseModel):
     added_permissions: Optional[List[str]] = Field(
-        None, alias='addedPermissions', description='Added permissions.'
+        None, alias="addedPermissions", description="Added permissions."
     )
     removed_permissions: Optional[List[str]] = Field(
-        None, alias='removedPermissions', description='Removed permissions.'
+        None, alias="removedPermissions", description="Removed permissions."
     )
 
 
 class LintPolicyRequest(BaseModel):
     full_resource_name: Optional[str] = Field(
         None,
-        alias='fullResourceName',
-        description='The full resource name of the policy this lint request is about. The name follows the Google Cloud Platform (GCP) resource format. For example, a GCP project with ID `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`. The resource name is not used to read the policy instance from the Cloud IAM database. The candidate policy for lint has to be provided in the same request object.',
+        alias="fullResourceName",
+        description="The full resource name of the policy this lint request is about. The name follows the Google Cloud Platform (GCP) resource format. For example, a GCP project with ID `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`. The resource name is not used to read the policy instance from the Cloud IAM database. The candidate policy for lint has to be provided in the same request object.",
     )
     condition: Optional[Expr] = Field(
-        None, description='google.iam.v1.Binding.condition object to be linted.'
+        None, description="google.iam.v1.Binding.condition object to be linted."
     )
 
 
 class Operation(BaseModel):
     name: Optional[str] = Field(
         None,
-        description='The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.',
+        description="The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.",
     )
     metadata: Optional[Dict[str, Dict[str, Any]]] = Field(
         None,
-        description='Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.',
+        description="Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.",
     )
     response: Optional[Dict[str, Dict[str, Any]]] = Field(
         None,
-        description='The normal response of the operation in case of success. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.',
+        description="The normal response of the operation in case of success. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.",
     )
     done: Optional[bool] = Field(
         None,
-        description='If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.',
+        description="If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.",
     )
     error: Optional[Status] = Field(
         None,
-        description='The error result of the operation in case of failure or cancellation.',
+        description="The error result of the operation in case of failure or cancellation.",
     )
 
 
 class AdminAuditData(BaseModel):
     permission_delta: Optional[PermissionDelta] = Field(
         None,
-        alias='permissionDelta',
-        description='The permission_delta when when creating or updating a Role.',
+        alias="permissionDelta",
+        description="The permission_delta when when creating or updating a Role.",
     )
 
 
 class SignBlobRequest(BaseModel):
     bytes_to_sign: Optional[str] = Field(
         None,
-        alias='bytesToSign',
-        description='Required. Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The bytes to sign.',
+        alias="bytesToSign",
+        description="Required. Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api). The bytes to sign.",
     )
 
 
 class ListWorkloadIdentityPoolsResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.',
+        alias="nextPageToken",
+        description="A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
     )
     workload_identity_pools: Optional[List[WorkloadIdentityPool]] = Field(
-        None, alias='workloadIdentityPools', description='A list of pools.'
+        None, alias="workloadIdentityPools", description="A list of pools."
     )
 
 
 class Binding(BaseModel):
     condition: Optional[Expr] = Field(
         None,
-        description='The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).',
+        description="The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
     )
     role: Optional[str] = Field(
         None,
-        description='Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.',
+        description="Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.",
     )
     members: Optional[List[str]] = Field(
         None,
-        description='Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. ',
+        description="Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. ",
     )
 
 
 class WorkloadIdentityPoolProvider(BaseModel):
-    name: Optional[str] = Field(
-        None, description='Output only. The resource name of the provider.'
-    )
-    aws: Optional[Aws] = Field(
-        None, description='An Amazon Web Services identity provider.'
-    )
+    name: Optional[str] = Field(None, description="Output only. The resource name of the provider.")
+    aws: Optional[Aws] = Field(None, description="An Amazon Web Services identity provider.")
     display_name: Optional[str] = Field(
         None,
-        alias='displayName',
-        description='A display name for the provider. Cannot exceed 32 characters.',
+        alias="displayName",
+        description="A display name for the provider. Cannot exceed 32 characters.",
     )
     description: Optional[str] = Field(
         None,
-        description='A description for the provider. Cannot exceed 256 characters.',
+        description="A description for the provider. Cannot exceed 256 characters.",
     )
     attribute_mapping: Optional[Dict[str, str]] = Field(
         None,
-        alias='attributeMapping',
+        alias="attributeMapping",
         description='Maps attributes from authentication credentials issued by an external identity provider to Google Cloud attributes, such as `subject` and `segment`. Each key must be a string specifying the Google Cloud IAM attribute to map to. The following keys are supported: * `google.subject`: The principal IAM is authenticating. You can reference this value in IAM bindings. This is also the subject that appears in Cloud Logging logs. Cannot exceed 127 characters. * `google.groups`: Groups the external identity belongs to. You can grant groups access to resources using an IAM `principalSet` binding; access applies to all members of the group. You can also provide custom attributes by specifying `attribute.{custom_attribute}`, where `{custom_attribute}` is the name of the custom attribute to be mapped. You can define a maximum of 50 custom attributes. The maximum length of a mapped attribute key is 100 characters, and the key may only contain the characters [a-z0-9_]. You can reference these attributes in IAM policies to define fine-grained access for a workload to Google Cloud resources. For example: * `google.subject`: `principal://iam.googleapis.com/projects/{project}/locations/{location}/workloadIdentityPools/{pool}/subject/{value}` * `google.groups`: `principalSet://iam.googleapis.com/projects/{project}/locations/{location}/workloadIdentityPools/{pool}/group/{value}` * `attribute.{custom_attribute}`: `principalSet://iam.googleapis.com/projects/{project}/locations/{location}/workloadIdentityPools/{pool}/attribute.{custom_attribute}/{value}` Each value must be a [Common Expression Language] (https://opensource.google/projects/cel) function that maps an identity provider credential to the normalized attribute specified by the corresponding map key. You can use the `assertion` keyword in the expression to access a JSON representation of the authentication credential issued by the provider. The maximum length of an attribute mapping expression is 2048 characters. When evaluated, the total size of all mapped attributes must not exceed 8KB. For AWS providers, if no attribute mapping is defined, the following default mapping applies: ``` { "google.subject":"assertion.arn", "attribute.aws_role": "assertion.arn.contains(\'assumed-role\')" " ? assertion.arn.extract(\'{account_arn}assumed-role/\')" " + \'assumed-role/\'" " + assertion.arn.extract(\'assumed-role/{role_name}/\')" " : assertion.arn", } ``` If any custom attribute mappings are defined, they must include a mapping to the `google.subject` attribute. For OIDC providers, you must supply a custom mapping, which must include the `google.subject` attribute. For example, the following maps the `sub` claim of the incoming credential to the `subject` attribute on a Google token: ``` {"google.subject": "assertion.sub"} ```',
     )
     disabled: Optional[bool] = Field(
         None,
-        description='Whether the provider is disabled. You cannot use a disabled provider to exchange tokens. However, existing tokens still grant access.',
+        description="Whether the provider is disabled. You cannot use a disabled provider to exchange tokens. However, existing tokens still grant access.",
     )
     attribute_condition: Optional[str] = Field(
         None,
-        alias='attributeCondition',
-        description='[A Common Expression Language](https://opensource.google/projects/cel) expression, in plain text, to restrict what otherwise valid authentication credentials issued by the provider should not be accepted. The expression must output a boolean representing whether to allow the federation. The following keywords may be referenced in the expressions: * `assertion`: JSON representing the authentication credential issued by the provider. * `google`: The Google attributes mapped from the assertion in the `attribute_mappings`. * `attribute`: The custom attributes mapped from the assertion in the `attribute_mappings`. The maximum length of the attribute condition expression is 4096 characters. If unspecified, all valid authentication credential are accepted. The following example shows how to only allow credentials with a mapped `google.groups` value of `admins`: ``` "\'admins\' in google.groups" ```',
+        alias="attributeCondition",
+        description="[A Common Expression Language](https://opensource.google/projects/cel) expression, in plain text, to restrict what otherwise valid authentication credentials issued by the provider should not be accepted. The expression must output a boolean representing whether to allow the federation. The following keywords may be referenced in the expressions: * `assertion`: JSON representing the authentication credential issued by the provider. * `google`: The Google attributes mapped from the assertion in the `attribute_mappings`. * `attribute`: The custom attributes mapped from the assertion in the `attribute_mappings`. The maximum length of the attribute condition expression is 4096 characters. If unspecified, all valid authentication credential are accepted. The following example shows how to only allow credentials with a mapped `google.groups` value of `admins`: ``` \"'admins' in google.groups\" ```",
     )
-    oidc: Optional[Oidc] = Field(
-        None, description='An OpenId Connect 1.0 identity provider.'
-    )
-    state: Optional[State] = Field(
-        None, description='Output only. The state of the provider.'
-    )
+    oidc: Optional[Oidc] = Field(None, description="An OpenId Connect 1.0 identity provider.")
+    state: Optional[State] = Field(None, description="Output only. The state of the provider.")
 
 
 class ListRolesResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='To retrieve the next page of results, set `ListRolesRequest.page_token` to this value.',
+        alias="nextPageToken",
+        description="To retrieve the next page of results, set `ListRolesRequest.page_token` to this value.",
     )
-    roles: Optional[List[Role]] = Field(
-        None, description='The Roles defined on this resource.'
-    )
+    roles: Optional[List[Role]] = Field(None, description="The Roles defined on this resource.")
 
 
 class PatchServiceAccountRequest(BaseModel):
-    service_account: Optional[ServiceAccount] = Field(None, alias='serviceAccount')
-    update_mask: Optional[str] = Field(None, alias='updateMask')
+    service_account: Optional[ServiceAccount] = Field(None, alias="serviceAccount")
+    update_mask: Optional[str] = Field(None, alias="updateMask")
 
 
 class AuditConfig(BaseModel):
     service: Optional[str] = Field(
         None,
-        description='Specifies a service that will be enabled for audit logging. For example, `storage.googleapis.com`, `cloudsql.googleapis.com`. `allServices` is a special value that covers all services.',
+        description="Specifies a service that will be enabled for audit logging. For example, `storage.googleapis.com`, `cloudsql.googleapis.com`. `allServices` is a special value that covers all services.",
     )
     audit_log_configs: Optional[List[AuditLogConfig]] = Field(
         None,
-        alias='auditLogConfigs',
-        description='The configuration for logging of each type of permission.',
+        alias="auditLogConfigs",
+        description="The configuration for logging of each type of permission.",
     )
 
 
 class QueryAuditableServicesResponse(BaseModel):
     services: Optional[List[AuditableService]] = Field(
-        None, description='The auditable services for a resource.'
+        None, description="The auditable services for a resource."
     )
 
 
 class ListWorkloadIdentityPoolProvidersResponse(BaseModel):
-    workload_identity_pool_providers: Optional[
-        List[WorkloadIdentityPoolProvider]
-    ] = Field(
-        None, alias='workloadIdentityPoolProviders', description='A list of providers.'
+    workload_identity_pool_providers: Optional[List[WorkloadIdentityPoolProvider]] = Field(
+        None, alias="workloadIdentityPoolProviders", description="A list of providers."
     )
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.',
+        alias="nextPageToken",
+        description="A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
     )
 
 
 class ListServiceAccountKeysResponse(BaseModel):
     keys: Optional[List[ServiceAccountKey]] = Field(
-        None, description='The public keys for the service account.'
+        None, description="The public keys for the service account."
     )
 
 
 class AuditData(BaseModel):
     policy_delta: Optional[PolicyDelta] = Field(
         None,
-        alias='policyDelta',
-        description='Policy delta between the original policy and the newly set policy.',
+        alias="policyDelta",
+        description="Policy delta between the original policy and the newly set policy.",
     )
 
 
 class Policy(BaseModel):
     etag: Optional[str] = Field(
         None,
-        description='`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.',
+        description="`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.",
     )
     audit_configs: Optional[List[AuditConfig]] = Field(
         None,
-        alias='auditConfigs',
-        description='Specifies cloud audit logging configuration for this policy.',
+        alias="auditConfigs",
+        description="Specifies cloud audit logging configuration for this policy.",
     )
     bindings: Optional[List[Binding]] = Field(
         None,
-        description='Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`.',
+        description="Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`.",
     )
     version: Optional[int] = Field(
         None,
-        description='Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).',
+        description="Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
     )
 
 
 class SetIamPolicyRequest(BaseModel):
     policy: Optional[Policy] = Field(
         None,
-        description='REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud Platform services (such as Projects) might reject them.',
+        description="REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud Platform services (such as Projects) might reject them.",
     )
     update_mask: Optional[str] = Field(
         None,
-        alias='updateMask',
+        alias="updateMask",
         description='OPTIONAL: A FieldMask specifying which fields of the policy to modify. Only the fields in the mask will be modified. If no mask is provided, the following default mask is used: `paths: "bindings, etag"`',
     )
 
 
 class Model(BaseModel):
     undelete_service_account_request: Optional[UndeleteServiceAccountRequest] = Field(
-        None, alias='UndeleteServiceAccountRequest'
+        None, alias="UndeleteServiceAccountRequest"
     )
-    sign_blob_response: Optional[SignBlobResponse] = Field(
-        None, alias='SignBlobResponse'
-    )
-    oidc: Optional[Oidc] = Field(None, alias='Oidc')
+    sign_blob_response: Optional[SignBlobResponse] = Field(None, alias="SignBlobResponse")
+    oidc: Optional[Oidc] = Field(None, alias="Oidc")
     enable_service_account_request: Optional[EnableServiceAccountRequest] = Field(
-        None, alias='EnableServiceAccountRequest'
+        None, alias="EnableServiceAccountRequest"
     )
     disable_service_account_request: Optional[DisableServiceAccountRequest] = Field(
-        None, alias='DisableServiceAccountRequest'
+        None, alias="DisableServiceAccountRequest"
     )
-    binding: Optional[Binding] = Field(None, alias='Binding')
+    binding: Optional[Binding] = Field(None, alias="Binding")
     workload_identity_pool_provider: Optional[WorkloadIdentityPoolProvider] = Field(
-        None, alias='WorkloadIdentityPoolProvider'
+        None, alias="WorkloadIdentityPoolProvider"
     )
     undelete_workload_identity_pool_provider_request: Optional[
         UndeleteWorkloadIdentityPoolProviderRequest
-    ] = Field(None, alias='UndeleteWorkloadIdentityPoolProviderRequest')
-    list_roles_response: Optional[ListRolesResponse] = Field(
-        None, alias='ListRolesResponse'
-    )
-    sign_jwt_request: Optional[SignJwtRequest] = Field(None, alias='SignJwtRequest')
+    ] = Field(None, alias="UndeleteWorkloadIdentityPoolProviderRequest")
+    list_roles_response: Optional[ListRolesResponse] = Field(None, alias="ListRolesResponse")
+    sign_jwt_request: Optional[SignJwtRequest] = Field(None, alias="SignJwtRequest")
     patch_service_account_request: Optional[PatchServiceAccountRequest] = Field(
-        None, alias='PatchServiceAccountRequest'
+        None, alias="PatchServiceAccountRequest"
     )
-    set_iam_policy_request: Optional[SetIamPolicyRequest] = Field(
-        None, alias='SetIamPolicyRequest'
-    )
+    set_iam_policy_request: Optional[SetIamPolicyRequest] = Field(None, alias="SetIamPolicyRequest")
     query_auditable_services_response: Optional[QueryAuditableServicesResponse] = Field(
-        None, alias='QueryAuditableServicesResponse'
+        None, alias="QueryAuditableServicesResponse"
     )
     test_iam_permissions_response: Optional[TestIamPermissionsResponse] = Field(
-        None, alias='TestIamPermissionsResponse'
+        None, alias="TestIamPermissionsResponse"
     )
-    sign_jwt_response: Optional[SignJwtResponse] = Field(None, alias='SignJwtResponse')
+    sign_jwt_response: Optional[SignJwtResponse] = Field(None, alias="SignJwtResponse")
     list_workload_identity_pool_providers_response: Optional[
         ListWorkloadIdentityPoolProvidersResponse
-    ] = Field(None, alias='ListWorkloadIdentityPoolProvidersResponse')
+    ] = Field(None, alias="ListWorkloadIdentityPoolProvidersResponse")
     test_iam_permissions_request: Optional[TestIamPermissionsRequest] = Field(
-        None, alias='TestIamPermissionsRequest'
+        None, alias="TestIamPermissionsRequest"
     )
     query_auditable_services_request: Optional[QueryAuditableServicesRequest] = Field(
-        None, alias='QueryAuditableServicesRequest'
+        None, alias="QueryAuditableServicesRequest"
     )
-    binding_delta: Optional[BindingDelta] = Field(None, alias='BindingDelta')
-    lint_result: Optional[LintResult] = Field(None, alias='LintResult')
-    role: Optional[Role] = Field(None, alias='Role')
-    list_service_account_keys_response: Optional[
-        ListServiceAccountKeysResponse
-    ] = Field(None, alias='ListServiceAccountKeysResponse')
+    binding_delta: Optional[BindingDelta] = Field(None, alias="BindingDelta")
+    lint_result: Optional[LintResult] = Field(None, alias="LintResult")
+    role: Optional[Role] = Field(None, alias="Role")
+    list_service_account_keys_response: Optional[ListServiceAccountKeysResponse] = Field(
+        None, alias="ListServiceAccountKeysResponse"
+    )
     query_grantable_roles_response: Optional[QueryGrantableRolesResponse] = Field(
-        None, alias='QueryGrantableRolesResponse'
+        None, alias="QueryGrantableRolesResponse"
     )
-    query_testable_permissions_request: Optional[
-        QueryTestablePermissionsRequest
-    ] = Field(None, alias='QueryTestablePermissionsRequest')
+    query_testable_permissions_request: Optional[QueryTestablePermissionsRequest] = Field(
+        None, alias="QueryTestablePermissionsRequest"
+    )
     create_service_account_request: Optional[CreateServiceAccountRequest] = Field(
-        None, alias='CreateServiceAccountRequest'
+        None, alias="CreateServiceAccountRequest"
     )
     workload_identity_pool: Optional[WorkloadIdentityPool] = Field(
-        None, alias='WorkloadIdentityPool'
+        None, alias="WorkloadIdentityPool"
     )
-    permission: Optional[Permission] = Field(None, alias='Permission')
-    create_service_account_key_request: Optional[
-        CreateServiceAccountKeyRequest
-    ] = Field(None, alias='CreateServiceAccountKeyRequest')
-    query_testable_permissions_response: Optional[
-        QueryTestablePermissionsResponse
-    ] = Field(None, alias='QueryTestablePermissionsResponse')
-    audit_data: Optional[AuditData] = Field(None, alias='AuditData')
-    audit_log_config: Optional[AuditLogConfig] = Field(None, alias='AuditLogConfig')
-    service_account: Optional[ServiceAccount] = Field(None, alias='ServiceAccount')
+    permission: Optional[Permission] = Field(None, alias="Permission")
+    create_service_account_key_request: Optional[CreateServiceAccountKeyRequest] = Field(
+        None, alias="CreateServiceAccountKeyRequest"
+    )
+    query_testable_permissions_response: Optional[QueryTestablePermissionsResponse] = Field(
+        None, alias="QueryTestablePermissionsResponse"
+    )
+    audit_data: Optional[AuditData] = Field(None, alias="AuditData")
+    audit_log_config: Optional[AuditLogConfig] = Field(None, alias="AuditLogConfig")
+    service_account: Optional[ServiceAccount] = Field(None, alias="ServiceAccount")
     undelete_service_account_response: Optional[UndeleteServiceAccountResponse] = Field(
-        None, alias='UndeleteServiceAccountResponse'
+        None, alias="UndeleteServiceAccountResponse"
     )
-    aws: Optional[Aws] = Field(None, alias='Aws')
-    undelete_role_request: Optional[UndeleteRoleRequest] = Field(
-        None, alias='UndeleteRoleRequest'
+    aws: Optional[Aws] = Field(None, alias="Aws")
+    undelete_role_request: Optional[UndeleteRoleRequest] = Field(None, alias="UndeleteRoleRequest")
+    status: Optional[Status] = Field(None, alias="Status")
+    upload_service_account_key_request: Optional[UploadServiceAccountKeyRequest] = Field(
+        None, alias="UploadServiceAccountKeyRequest"
     )
-    status: Optional[Status] = Field(None, alias='Status')
-    upload_service_account_key_request: Optional[
-        UploadServiceAccountKeyRequest
-    ] = Field(None, alias='UploadServiceAccountKeyRequest')
-    service_account_key: Optional[ServiceAccountKey] = Field(
-        None, alias='ServiceAccountKey'
-    )
-    lint_policy_response: Optional[LintPolicyResponse] = Field(
-        None, alias='LintPolicyResponse'
-    )
-    create_role_request: Optional[CreateRoleRequest] = Field(
-        None, alias='CreateRoleRequest'
-    )
-    expr: Optional[Expr] = Field(None, alias='Expr')
+    service_account_key: Optional[ServiceAccountKey] = Field(None, alias="ServiceAccountKey")
+    lint_policy_response: Optional[LintPolicyResponse] = Field(None, alias="LintPolicyResponse")
+    create_role_request: Optional[CreateRoleRequest] = Field(None, alias="CreateRoleRequest")
+    expr: Optional[Expr] = Field(None, alias="Expr")
     query_grantable_roles_request: Optional[QueryGrantableRolesRequest] = Field(
-        None, alias='QueryGrantableRolesRequest'
+        None, alias="QueryGrantableRolesRequest"
     )
-    empty: Optional[Empty] = Field(None, alias='Empty')
-    policy: Optional[Policy] = Field(None, alias='Policy')
-    disable_service_account_key_request: Optional[
-        DisableServiceAccountKeyRequest
-    ] = Field(None, alias='DisableServiceAccountKeyRequest')
+    empty: Optional[Empty] = Field(None, alias="Empty")
+    policy: Optional[Policy] = Field(None, alias="Policy")
+    disable_service_account_key_request: Optional[DisableServiceAccountKeyRequest] = Field(
+        None, alias="DisableServiceAccountKeyRequest"
+    )
     list_service_accounts_response: Optional[ListServiceAccountsResponse] = Field(
-        None, alias='ListServiceAccountsResponse'
+        None, alias="ListServiceAccountsResponse"
     )
-    policy_delta: Optional[PolicyDelta] = Field(None, alias='PolicyDelta')
-    enable_service_account_key_request: Optional[
-        EnableServiceAccountKeyRequest
-    ] = Field(None, alias='EnableServiceAccountKeyRequest')
-    audit_config: Optional[AuditConfig] = Field(None, alias='AuditConfig')
-    undelete_workload_identity_pool_request: Optional[
-        UndeleteWorkloadIdentityPoolRequest
-    ] = Field(None, alias='UndeleteWorkloadIdentityPoolRequest')
-    permission_delta: Optional[PermissionDelta] = Field(None, alias='PermissionDelta')
-    lint_policy_request: Optional[LintPolicyRequest] = Field(
-        None, alias='LintPolicyRequest'
+    policy_delta: Optional[PolicyDelta] = Field(None, alias="PolicyDelta")
+    enable_service_account_key_request: Optional[EnableServiceAccountKeyRequest] = Field(
+        None, alias="EnableServiceAccountKeyRequest"
     )
-    operation: Optional[Operation] = Field(None, alias='Operation')
-    admin_audit_data: Optional[AdminAuditData] = Field(None, alias='AdminAuditData')
-    sign_blob_request: Optional[SignBlobRequest] = Field(None, alias='SignBlobRequest')
-    auditable_service: Optional[AuditableService] = Field(
-        None, alias='AuditableService'
+    audit_config: Optional[AuditConfig] = Field(None, alias="AuditConfig")
+    undelete_workload_identity_pool_request: Optional[UndeleteWorkloadIdentityPoolRequest] = Field(
+        None, alias="UndeleteWorkloadIdentityPoolRequest"
     )
-    list_workload_identity_pools_response: Optional[
-        ListWorkloadIdentityPoolsResponse
-    ] = Field(None, alias='ListWorkloadIdentityPoolsResponse')
+    permission_delta: Optional[PermissionDelta] = Field(None, alias="PermissionDelta")
+    lint_policy_request: Optional[LintPolicyRequest] = Field(None, alias="LintPolicyRequest")
+    operation: Optional[Operation] = Field(None, alias="Operation")
+    admin_audit_data: Optional[AdminAuditData] = Field(None, alias="AdminAuditData")
+    sign_blob_request: Optional[SignBlobRequest] = Field(None, alias="SignBlobRequest")
+    auditable_service: Optional[AuditableService] = Field(None, alias="AuditableService")
+    list_workload_identity_pools_response: Optional[ListWorkloadIdentityPoolsResponse] = Field(
+        None, alias="ListWorkloadIdentityPoolsResponse"
+    )

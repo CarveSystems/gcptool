@@ -1,11 +1,10 @@
-from typing import List, Any, Optional
-from gcptool.inventory.compute.types import Op
+from typing import Any, List, Optional
 
+from gcptool.inventory.compute.types import Op
+from gcptool.inventory.storage import buckets
+from gcptool.scanner.context import Context
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
-from gcptool.scanner.context import Context
-
-from gcptool.inventory.storage import buckets
 
 
 @scan
@@ -28,7 +27,7 @@ class PubliclyWriteableBuckets(Scan):
         return
         all_buckets = []
 
-        for project in context.projects: 
+        for project in context.projects:
             all_buckets.extend(buckets.all(project.id, context.cache))
 
         readable_buckets: List[str] = []
@@ -95,7 +94,7 @@ class PubliclyWriteableBuckets(Scan):
                         elif binding["role"] in read_roles:
                             readable = True
             except:
-                print(f'!! failed to read IAM policy for {bucket}')
+                print(f"!! failed to read IAM policy for {bucket}")
                 pass
 
             if writable:
@@ -105,14 +104,15 @@ class PubliclyWriteableBuckets(Scan):
 
         if len(writable_buckets) or len(readable_buckets):
             return self.finding(
-                readable_buckets=readable_buckets, writable_buckets=writable_buckets,
+                readable_buckets=readable_buckets,
+                writable_buckets=writable_buckets,
             )
 
         return None
 
+
 @scan
 class LoggingDisabledBuckets(Scan):
-
     @staticmethod
     def meta() -> ScanMetadata:
         return ScanMetadata(
@@ -120,13 +120,13 @@ class LoggingDisabledBuckets(Scan):
             "bucket_logging",
             "Cloud Storage buckets with logging disabled",
             Severity.LOW,
-            ["roles/iam.securityReviewer"]
+            ["roles/iam.securityReviewer"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:
 
         total_buckets = 0
-        
+
         logging_disabled_buckets = []
 
         for project in context.projects:
@@ -137,9 +137,13 @@ class LoggingDisabledBuckets(Scan):
                 if not bucket.get_logging():
                     logging_disabled_buckets.append(bucket.id)
 
-
         if logging_disabled_buckets:
-            return self.finding(buckets=logging_disabled_buckets, total=total_buckets, affected=len(logging_disabled_buckets))
+            return self.finding(
+                buckets=logging_disabled_buckets,
+                total=total_buckets,
+                affected=len(logging_disabled_buckets),
+            )
+
 
 @scan
 class VersioningDisabledBuckets(Scan):
@@ -150,7 +154,7 @@ class VersioningDisabledBuckets(Scan):
             "bucket_versioning",
             "Cloud Storage buckets with versioning disabled",
             Severity.LOW,
-            ["roles/iam.securityReviewer"]
+            ["roles/iam.securityReviewer"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:
@@ -164,9 +168,13 @@ class VersioningDisabledBuckets(Scan):
                 if not bucket.versioning_enabled:
                     version_disabled_buckets.append(bucket.id)
 
-
         if version_disabled_buckets:
-            return self.finding(buckets=version_disabled_buckets, total=total_buckets, affected=len(version_disabled_buckets))
+            return self.finding(
+                buckets=version_disabled_buckets,
+                total=total_buckets,
+                affected=len(version_disabled_buckets),
+            )
+
 
 @scan
 class PubliclyReadableBuckets(Scan):

@@ -21,4 +21,3 @@ def query_testable_permissions(resource_name: str) -> List[str]:
             return resp
 
         body["pageToken"] = response["nextPageToken"]
-

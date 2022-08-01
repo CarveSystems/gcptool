@@ -11,130 +11,128 @@ from pydantic import BaseModel, Field
 
 
 class Encoding(Enum):
-    encoding_unspecified = 'ENCODING_UNSPECIFIED'
-    json = 'JSON'
-    binary = 'BINARY'
+    encoding_unspecified = "ENCODING_UNSPECIFIED"
+    json = "JSON"
+    binary = "BINARY"
 
 
 class SchemaSettings(BaseModel):
     encoding: Optional[Encoding] = Field(
-        None, description='The encoding of messages validated against `schema`.'
+        None, description="The encoding of messages validated against `schema`."
     )
     schema_: Optional[str] = Field(
         None,
-        alias='schema',
-        description='Required. The name of the schema that messages published should be validated against. Format is `projects/{project}/schemas/{schema}`. The value of this field will be `_deleted-schema_` if the schema has been deleted.',
+        alias="schema",
+        description="Required. The name of the schema that messages published should be validated against. Format is `projects/{project}/schemas/{schema}`. The value of this field will be `_deleted-schema_` if the schema has been deleted.",
     )
 
 
 class MessageStoragePolicy(BaseModel):
     allowed_persistence_regions: Optional[List[str]] = Field(
         None,
-        alias='allowedPersistenceRegions',
-        description='A list of IDs of GCP regions where messages that are published to the topic may be persisted in storage. Messages published by publishers running in non-allowed GCP regions (or running outside of GCP altogether) will be routed for storage in one of the allowed regions. An empty list means that no regions are allowed, and is not a valid configuration.',
+        alias="allowedPersistenceRegions",
+        description="A list of IDs of GCP regions where messages that are published to the topic may be persisted in storage. Messages published by publishers running in non-allowed GCP regions (or running outside of GCP altogether) will be routed for storage in one of the allowed regions. An empty list means that no regions are allowed, and is not a valid configuration.",
     )
 
 
 class PullRequest(BaseModel):
     return_immediately: Optional[bool] = Field(
         None,
-        alias='returnImmediately',
-        description='Optional. If this field set to true, the system will respond immediately even if it there are no messages available to return in the `Pull` response. Otherwise, the system may wait (for a bounded amount of time) until at least one message is available, rather than returning no messages. Warning: setting this field to `true` is discouraged because it adversely impacts the performance of `Pull` operations. We recommend that users do not set this field.',
+        alias="returnImmediately",
+        description="Optional. If this field set to true, the system will respond immediately even if it there are no messages available to return in the `Pull` response. Otherwise, the system may wait (for a bounded amount of time) until at least one message is available, rather than returning no messages. Warning: setting this field to `true` is discouraged because it adversely impacts the performance of `Pull` operations. We recommend that users do not set this field.",
     )
     max_messages: Optional[int] = Field(
         None,
-        alias='maxMessages',
-        description='Required. The maximum number of messages to return for this request. Must be a positive integer. The Pub/Sub system may return fewer than the number specified.',
+        alias="maxMessages",
+        description="Required. The maximum number of messages to return for this request. Must be a positive integer. The Pub/Sub system may return fewer than the number specified.",
     )
 
 
 class OidcToken(BaseModel):
     service_account_email: Optional[str] = Field(
         None,
-        alias='serviceAccountEmail',
-        description='[Service account email](https://cloud.google.com/iam/docs/service-accounts) to be used for generating the OIDC token. The caller (for CreateSubscription, UpdateSubscription, and ModifyPushConfig RPCs) must have the iam.serviceAccounts.actAs permission for the service account.',
+        alias="serviceAccountEmail",
+        description="[Service account email](https://cloud.google.com/iam/docs/service-accounts) to be used for generating the OIDC token. The caller (for CreateSubscription, UpdateSubscription, and ModifyPushConfig RPCs) must have the iam.serviceAccounts.actAs permission for the service account.",
     )
     audience: Optional[str] = Field(
         None,
-        description='Audience to be used when generating OIDC token. The audience claim identifies the recipients that the JWT is intended for. The audience value is a single case-sensitive string. Having multiple values (array) for the audience field is not supported. More info about the OIDC JWT token audience here: https://tools.ietf.org/html/rfc7519#section-4.1.3 Note: if not specified, the Push endpoint URL will be used.',
+        description="Audience to be used when generating OIDC token. The audience claim identifies the recipients that the JWT is intended for. The audience value is a single case-sensitive string. Having multiple values (array) for the audience field is not supported. More info about the OIDC JWT token audience here: https://tools.ietf.org/html/rfc7519#section-4.1.3 Note: if not specified, the Push endpoint URL will be used.",
     )
 
 
 class Expr(BaseModel):
     expression: Optional[str] = Field(
         None,
-        description='Textual representation of an expression in Common Expression Language syntax.',
+        description="Textual representation of an expression in Common Expression Language syntax.",
     )
     title: Optional[str] = Field(
         None,
-        description='Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.',
+        description="Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.",
     )
     location: Optional[str] = Field(
         None,
-        description='Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.',
+        description="Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.",
     )
     description: Optional[str] = Field(
         None,
-        description='Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.',
+        description="Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.",
     )
 
 
 class Snapshot(BaseModel):
     topic: Optional[str] = Field(
         None,
-        description='The name of the topic from which this snapshot is retaining messages.',
+        description="The name of the topic from which this snapshot is retaining messages.",
     )
-    name: Optional[str] = Field(None, description='The name of the snapshot.')
+    name: Optional[str] = Field(None, description="The name of the snapshot.")
     labels: Optional[Dict[str, str]] = Field(
         None,
-        description='See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).',
+        description="See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).",
     )
     expire_time: Optional[str] = Field(
         None,
-        alias='expireTime',
-        description='The snapshot is guaranteed to exist up until this time. A newly-created snapshot expires no later than 7 days from the time of its creation. Its exact lifetime is determined at creation by the existing backlog in the source subscription. Specifically, the lifetime of the snapshot is `7 days - (age of oldest unacked message in the subscription)`. For example, consider a subscription whose oldest unacked message is 3 days old. If a snapshot is created from this subscription, the snapshot -- which will always capture this 3-day-old backlog as long as the snapshot exists -- will expire in 4 days. The service will refuse to create a snapshot that would expire in less than 1 hour after creation.',
+        alias="expireTime",
+        description="The snapshot is guaranteed to exist up until this time. A newly-created snapshot expires no later than 7 days from the time of its creation. Its exact lifetime is determined at creation by the existing backlog in the source subscription. Specifically, the lifetime of the snapshot is `7 days - (age of oldest unacked message in the subscription)`. For example, consider a subscription whose oldest unacked message is 3 days old. If a snapshot is created from this subscription, the snapshot -- which will always capture this 3-day-old backlog as long as the snapshot exists -- will expire in 4 days. The service will refuse to create a snapshot that would expire in less than 1 hour after creation.",
     )
 
 
 class Type(Enum):
-    type_unspecified = 'TYPE_UNSPECIFIED'
-    protocol_buffer = 'PROTOCOL_BUFFER'
-    avro = 'AVRO'
+    type_unspecified = "TYPE_UNSPECIFIED"
+    protocol_buffer = "PROTOCOL_BUFFER"
+    avro = "AVRO"
 
 
 class Schema(BaseModel):
-    type: Optional[Type] = Field(None, description='The type of the schema definition.')
+    type: Optional[Type] = Field(None, description="The type of the schema definition.")
     name: Optional[str] = Field(
         None,
-        description='Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.',
+        description="Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
     )
     definition: Optional[str] = Field(
         None,
-        description='The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.',
+        description="The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
     )
 
 
 class ListSnapshotsResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='If not empty, indicates that there may be more snapshot that match the request; this value should be passed in a new `ListSnapshotsRequest`.',
+        alias="nextPageToken",
+        description="If not empty, indicates that there may be more snapshot that match the request; this value should be passed in a new `ListSnapshotsRequest`.",
     )
-    snapshots: Optional[List[Snapshot]] = Field(
-        None, description='The resulting snapshots.'
-    )
+    snapshots: Optional[List[Snapshot]] = Field(None, description="The resulting snapshots.")
 
 
 class DeadLetterPolicy(BaseModel):
     dead_letter_topic: Optional[str] = Field(
         None,
-        alias='deadLetterTopic',
+        alias="deadLetterTopic",
         description="The name of the topic to which dead letter messages should be published. Format is `projects/{project}/topics/{topic}`.The Cloud Pub/Sub service account associated with the enclosing subscription's parent project (i.e., service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have permission to Publish() to this topic. The operation will fail if the topic does not exist. Users should ensure that there is a subscription attached to this topic since messages published to a topic with no subscriptions are lost.",
     )
     max_delivery_attempts: Optional[int] = Field(
         None,
-        alias='maxDeliveryAttempts',
-        description='The maximum number of delivery attempts for any message. The value must be between 5 and 100. The number of delivery attempts is defined as 1 + (the sum of number of NACKs and number of times the acknowledgement deadline has been exceeded for the message). A NACK is any call to ModifyAckDeadline with a 0 deadline. Note that client libraries may automatically extend ack_deadlines. This field will be honored on a best effort basis. If this parameter is 0, a default value of 5 is used.',
+        alias="maxDeliveryAttempts",
+        description="The maximum number of delivery attempts for any message. The value must be between 5 and 100. The number of delivery attempts is defined as 1 + (the sum of number of NACKs and number of times the acknowledgement deadline has been exceeded for the message). A NACK is any call to ModifyAckDeadline with a 0 deadline. Note that client libraries may automatically extend ack_deadlines. This field will be honored on a best effort basis. If this parameter is 0, a default value of 5 is used.",
     )
 
 
@@ -145,7 +143,7 @@ class DetachSubscriptionResponse(BaseModel):
 class TestIamPermissionsResponse(BaseModel):
     permissions: Optional[List[str]] = Field(
         None,
-        description='A subset of `TestPermissionsRequest.permissions` that the caller is allowed.',
+        description="A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
     )
 
 
@@ -159,13 +157,13 @@ class ExpirationPolicy(BaseModel):
 class RetryPolicy(BaseModel):
     maximum_backoff: Optional[str] = Field(
         None,
-        alias='maximumBackoff',
-        description='The maximum delay between consecutive deliveries of a given message. Value should be between 0 and 600 seconds. Defaults to 600 seconds.',
+        alias="maximumBackoff",
+        description="The maximum delay between consecutive deliveries of a given message. Value should be between 0 and 600 seconds. Defaults to 600 seconds.",
     )
     minimum_backoff: Optional[str] = Field(
         None,
-        alias='minimumBackoff',
-        description='The minimum delay between consecutive deliveries of a given message. Value should be between 0 and 600 seconds. Defaults to 10 seconds.',
+        alias="minimumBackoff",
+        description="The minimum delay between consecutive deliveries of a given message. Value should be between 0 and 600 seconds. Defaults to 10 seconds.",
     )
 
 
@@ -183,8 +181,8 @@ class SeekRequest(BaseModel):
 class AcknowledgeRequest(BaseModel):
     ack_ids: Optional[List[str]] = Field(
         None,
-        alias='ackIds',
-        description='Required. The acknowledgment ID for the messages being acknowledged that was returned by the Pub/Sub system in the `Pull` response. Must not be empty.',
+        alias="ackIds",
+        description="Required. The acknowledgment ID for the messages being acknowledged that was returned by the Pub/Sub system in the `Pull` response. Must not be empty.",
     )
 
 
@@ -195,15 +193,15 @@ class ValidateMessageResponse(BaseModel):
 class Binding(BaseModel):
     members: Optional[List[str]] = Field(
         None,
-        description='Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. ',
+        description="Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. ",
     )
     role: Optional[str] = Field(
         None,
-        description='Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.',
+        description="Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.",
     )
     condition: Optional[Expr] = Field(
         None,
-        description='The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).',
+        description="The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
     )
 
 
@@ -212,18 +210,16 @@ class Empty(BaseModel):
 
 
 class ValidateMessageRequest(BaseModel):
-    encoding: Optional[Encoding] = Field(
-        None, description='The encoding expected for messages'
-    )
+    encoding: Optional[Encoding] = Field(None, description="The encoding expected for messages")
     schema_: Optional[Schema] = Field(
-        None, alias='schema', description='Ad-hoc schema against which to validate'
+        None, alias="schema", description="Ad-hoc schema against which to validate"
     )
     message: Optional[str] = Field(
-        None, description='Message to validate against the provided `schema_spec`.'
+        None, description="Message to validate against the provided `schema_spec`."
     )
     name: Optional[str] = Field(
         None,
-        description='Name of the schema against which to validate. Format is `projects/{project}/schemas/{schema}`.',
+        description="Name of the schema against which to validate. Format is `projects/{project}/schemas/{schema}`.",
     )
 
 
@@ -234,22 +230,22 @@ class ValidateSchemaResponse(BaseModel):
 class ModifyAckDeadlineRequest(BaseModel):
     ack_deadline_seconds: Optional[int] = Field(
         None,
-        alias='ackDeadlineSeconds',
-        description='Required. The new ack deadline with respect to the time this request was sent to the Pub/Sub system. For example, if the value is 10, the new ack deadline will expire 10 seconds after the `ModifyAckDeadline` call was made. Specifying zero might immediately make the message available for delivery to another subscriber client. This typically results in an increase in the rate of message redeliveries (that is, duplicates). The minimum deadline you can specify is 0 seconds. The maximum deadline you can specify is 600 seconds (10 minutes).',
+        alias="ackDeadlineSeconds",
+        description="Required. The new ack deadline with respect to the time this request was sent to the Pub/Sub system. For example, if the value is 10, the new ack deadline will expire 10 seconds after the `ModifyAckDeadline` call was made. Specifying zero might immediately make the message available for delivery to another subscriber client. This typically results in an increase in the rate of message redeliveries (that is, duplicates). The minimum deadline you can specify is 0 seconds. The maximum deadline you can specify is 600 seconds (10 minutes).",
     )
     ack_ids: Optional[List[str]] = Field(
-        None, alias='ackIds', description='Required. List of acknowledgment IDs.'
+        None, alias="ackIds", description="Required. List of acknowledgment IDs."
     )
 
 
 class ListTopicSnapshotsResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='If not empty, indicates that there may be more snapshots that match the request; this value should be passed in a new `ListTopicSnapshotsRequest` to get more snapshots.',
+        alias="nextPageToken",
+        description="If not empty, indicates that there may be more snapshots that match the request; this value should be passed in a new `ListTopicSnapshotsRequest` to get more snapshots.",
     )
     snapshots: Optional[List[str]] = Field(
-        None, description='The names of the snapshots that match the request.'
+        None, description="The names of the snapshots that match the request."
     )
 
 
@@ -260,16 +256,14 @@ class SeekResponse(BaseModel):
 class ListSchemasResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='If not empty, indicates that there may be more schemas that match the request; this value should be passed in a new `ListSchemasRequest`.',
+        alias="nextPageToken",
+        description="If not empty, indicates that there may be more schemas that match the request; this value should be passed in a new `ListSchemasRequest`.",
     )
-    schemas: Optional[List[Schema]] = Field(None, description='The resulting schemas.')
+    schemas: Optional[List[Schema]] = Field(None, description="The resulting schemas.")
 
 
 class CreateSnapshotRequest(BaseModel):
-    labels: Optional[Dict[str, str]] = Field(
-        None, description='See Creating and managing labels.'
-    )
+    labels: Optional[Dict[str, str]] = Field(None, description="See Creating and managing labels.")
     subscription: Optional[str] = Field(
         None,
         description="Required. The subscription whose backlog the snapshot retains. Specifically, the created snapshot is guaranteed to retain: (a) The existing backlog on the subscription. More precisely, this is defined as the messages in the subscription's backlog that are unacknowledged upon the successful completion of the `CreateSnapshot` request; as well as: (b) Any messages published to the subscription's topic following the successful completion of the CreateSnapshot request. Format is `projects/{project}/subscriptions/{sub}`.",
@@ -279,53 +273,53 @@ class CreateSnapshotRequest(BaseModel):
 class ListTopicSubscriptionsResponse(BaseModel):
     subscriptions: Optional[List[str]] = Field(
         None,
-        description='The names of subscriptions attached to the topic specified in the request.',
+        description="The names of subscriptions attached to the topic specified in the request.",
     )
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListTopicSubscriptionsRequest` to get more subscriptions.',
+        alias="nextPageToken",
+        description="If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListTopicSubscriptionsRequest` to get more subscriptions.",
     )
 
 
 class PubsubMessage(BaseModel):
     ordering_key: Optional[str] = Field(
         None,
-        alias='orderingKey',
-        description='If non-empty, identifies related messages for which publish order should be respected. If a `Subscription` has `enable_message_ordering` set to `true`, messages published with the same non-empty `ordering_key` value will be delivered to subscribers in the order in which they are received by the Pub/Sub system. All `PubsubMessage`s published in a given `PublishRequest` must specify the same `ordering_key` value.',
+        alias="orderingKey",
+        description="If non-empty, identifies related messages for which publish order should be respected. If a `Subscription` has `enable_message_ordering` set to `true`, messages published with the same non-empty `ordering_key` value will be delivered to subscribers in the order in which they are received by the Pub/Sub system. All `PubsubMessage`s published in a given `PublishRequest` must specify the same `ordering_key` value.",
     )
     data: Optional[str] = Field(
         None,
-        description='The message data field. If this field is empty, the message must contain at least one attribute.',
+        description="The message data field. If this field is empty, the message must contain at least one attribute.",
     )
     publish_time: Optional[str] = Field(
         None,
-        alias='publishTime',
-        description='The time at which the message was published, populated by the server when it receives the `Publish` call. It must not be populated by the publisher in a `Publish` call.',
+        alias="publishTime",
+        description="The time at which the message was published, populated by the server when it receives the `Publish` call. It must not be populated by the publisher in a `Publish` call.",
     )
     attributes: Optional[Dict[str, str]] = Field(
         None,
-        description='Attributes for this message. If this field is empty, the message must contain non-empty data. This can be used to filter messages on the subscription.',
+        description="Attributes for this message. If this field is empty, the message must contain non-empty data. This can be used to filter messages on the subscription.",
     )
     message_id: Optional[str] = Field(
         None,
-        alias='messageId',
-        description='ID of this message, assigned by the server when the message is published. Guaranteed to be unique within the topic. This value may be read by a subscriber that receives a `PubsubMessage` via a `Pull` call or a push delivery. It must not be populated by the publisher in a `Publish` call.',
+        alias="messageId",
+        description="ID of this message, assigned by the server when the message is published. Guaranteed to be unique within the topic. This value may be read by a subscriber that receives a `PubsubMessage` via a `Pull` call or a push delivery. It must not be populated by the publisher in a `Publish` call.",
     )
 
 
 class Policy(BaseModel):
     etag: Optional[str] = Field(
         None,
-        description='`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.',
+        description="`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.",
     )
     bindings: Optional[List[Binding]] = Field(
         None,
-        description='Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`.',
+        description="Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`.",
     )
     version: Optional[int] = Field(
         None,
-        description='Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).',
+        description="Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
     )
 
 
@@ -339,26 +333,26 @@ class TestIamPermissionsRequest(BaseModel):
 class PublishResponse(BaseModel):
     message_ids: Optional[List[str]] = Field(
         None,
-        alias='messageIds',
-        description='The server-assigned ID of each published message, in the same order as the messages in the request. IDs are guaranteed to be unique within the topic.',
+        alias="messageIds",
+        description="The server-assigned ID of each published message, in the same order as the messages in the request. IDs are guaranteed to be unique within the topic.",
     )
 
 
 class PublishRequest(BaseModel):
     messages: Optional[List[PubsubMessage]] = Field(
-        None, description='Required. The messages to publish.'
+        None, description="Required. The messages to publish."
     )
 
 
 class Topic(BaseModel):
     kms_key_name: Optional[str] = Field(
         None,
-        alias='kmsKeyName',
-        description='The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic. The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.',
+        alias="kmsKeyName",
+        description="The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic. The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
     )
     labels: Optional[Dict[str, str]] = Field(
         None,
-        description='See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).',
+        description="See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).",
     )
     name: Optional[str] = Field(
         None,
@@ -366,23 +360,23 @@ class Topic(BaseModel):
     )
     schema_settings: Optional[SchemaSettings] = Field(
         None,
-        alias='schemaSettings',
-        description='Settings for validating messages published against a schema.',
+        alias="schemaSettings",
+        description="Settings for validating messages published against a schema.",
     )
     message_retention_duration: Optional[str] = Field(
         None,
-        alias='messageRetentionDuration',
-        description='Indicates the minimum duration to retain a message after it is published to the topic. If this field is set, messages published to the topic in the last `message_retention_duration` are always available to subscribers. For instance, it allows any attached subscription to [seek to a timestamp](https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time) that is up to `message_retention_duration` in the past. If this field is not set, message retention is controlled by settings on individual subscriptions. Cannot be more than 7 days or less than 10 minutes.',
+        alias="messageRetentionDuration",
+        description="Indicates the minimum duration to retain a message after it is published to the topic. If this field is set, messages published to the topic in the last `message_retention_duration` are always available to subscribers. For instance, it allows any attached subscription to [seek to a timestamp](https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time) that is up to `message_retention_duration` in the past. If this field is not set, message retention is controlled by settings on individual subscriptions. Cannot be more than 7 days or less than 10 minutes.",
     )
     satisfies_pzs: Optional[bool] = Field(
         None,
-        alias='satisfiesPzs',
-        description='Reserved for future use. This field is set only in responses from the server; it is ignored if it is set in any requests.',
+        alias="satisfiesPzs",
+        description="Reserved for future use. This field is set only in responses from the server; it is ignored if it is set in any requests.",
     )
     message_storage_policy: Optional[MessageStoragePolicy] = Field(
         None,
-        alias='messageStoragePolicy',
-        description='Policy constraining the set of Google Cloud Platform regions where messages published to the topic may be stored. If not present, then no constraints are in effect.',
+        alias="messageStoragePolicy",
+        description="Policy constraining the set of Google Cloud Platform regions where messages published to the topic may be stored. If not present, then no constraints are in effect.",
     )
 
 
@@ -393,71 +387,69 @@ class PushConfig(BaseModel):
     )
     oidc_token: Optional[OidcToken] = Field(
         None,
-        alias='oidcToken',
-        description='If specified, Pub/Sub will generate and attach an OIDC JWT token as an `Authorization` header in the HTTP request for every pushed message.',
+        alias="oidcToken",
+        description="If specified, Pub/Sub will generate and attach an OIDC JWT token as an `Authorization` header in the HTTP request for every pushed message.",
     )
     push_endpoint: Optional[str] = Field(
         None,
-        alias='pushEndpoint',
-        description='A URL locating the endpoint to which messages should be pushed. For example, a Webhook endpoint might use `https://example.com/push`.',
+        alias="pushEndpoint",
+        description="A URL locating the endpoint to which messages should be pushed. For example, a Webhook endpoint might use `https://example.com/push`.",
     )
 
 
 class UpdateSnapshotRequest(BaseModel):
-    snapshot: Optional[Snapshot] = Field(
-        None, description='Required. The updated snapshot object.'
-    )
+    snapshot: Optional[Snapshot] = Field(None, description="Required. The updated snapshot object.")
     update_mask: Optional[str] = Field(
         None,
-        alias='updateMask',
-        description='Required. Indicates which fields in the provided snapshot to update. Must be specified and non-empty.',
+        alias="updateMask",
+        description="Required. Indicates which fields in the provided snapshot to update. Must be specified and non-empty.",
     )
 
 
 class ValidateSchemaRequest(BaseModel):
     schema_: Optional[Schema] = Field(
-        None, alias='schema', description='Required. The schema object to validate.'
+        None, alias="schema", description="Required. The schema object to validate."
     )
 
 
 class Subscription(BaseModel):
     retain_acked_messages: Optional[bool] = Field(
         None,
-        alias='retainAckedMessages',
+        alias="retainAckedMessages",
         description="Indicates whether to retain acknowledged messages. If true, then messages are not expunged from the subscription's backlog, even if they are acknowledged, until they fall out of the `message_retention_duration` window. This must be true if you would like to [`Seek` to a timestamp] (https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time) in the past to replay previously-acknowledged messages.",
     )
     topic: Optional[str] = Field(
         None,
-        description='Required. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`. The value of this field will be `_deleted-topic_` if the topic has been deleted.',
+        description="Required. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`. The value of this field will be `_deleted-topic_` if the topic has been deleted.",
     )
     message_retention_duration: Optional[str] = Field(
         None,
-        alias='messageRetentionDuration',
+        alias="messageRetentionDuration",
         description="How long to retain unacknowledged messages in the subscription's backlog, from the moment a message is published. If `retain_acked_messages` is true, then this also configures the retention of acknowledged messages, and thus configures how far back in time a `Seek` can be done. Defaults to 7 days. Cannot be more than 7 days or less than 10 minutes.",
     )
     dead_letter_policy: Optional[DeadLetterPolicy] = Field(
         None,
-        alias='deadLetterPolicy',
+        alias="deadLetterPolicy",
         description="A policy that specifies the conditions for dead lettering messages in this subscription. If dead_letter_policy is not set, dead lettering is disabled. The Cloud Pub/Sub service account associated with this subscriptions's parent project (i.e., service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have permission to Acknowledge() messages on this subscription.",
     )
     topic_message_retention_duration: Optional[str] = Field(
         None,
-        alias='topicMessageRetentionDuration',
+        alias="topicMessageRetentionDuration",
         description="Output only. Indicates the minimum duration for which a message is retained after it is published to the subscription's topic. If this field is set, messages published to the subscription's topic in the last `topic_message_retention_duration` are always available to subscribers. See the `message_retention_duration` field in `Topic`. This field is set only in responses from the server; it is ignored if it is set in any requests.",
     )
     expiration_policy: Optional[ExpirationPolicy] = Field(
         None,
-        alias='expirationPolicy',
+        alias="expirationPolicy",
         description="A policy that specifies the conditions for this subscription's expiration. A subscription is considered active as long as any connected subscriber is successfully consuming messages from the subscription or is issuing operations on the subscription. If `expiration_policy` is not set, a *default policy* with `ttl` of 31 days will be used. The minimum allowed value for `expiration_policy.ttl` is 1 day. If `expiration_policy` is set, but `expiration_policy.ttl` is not set, the subscription never expires.",
     )
     push_config: Optional[PushConfig] = Field(
         None,
-        alias='pushConfig',
-        description='If push delivery is used with this subscription, this field is used to configure it. An empty `pushConfig` signifies that the subscriber will pull and ack messages using API methods.',
+        alias="pushConfig",
+        description="If push delivery is used with this subscription, this field is used to configure it. An empty `pushConfig` signifies that the subscriber will pull and ack messages using API methods.",
     )
     filter: Optional[str] = Field(
         None,
-        description='An expression written in the Pub/Sub [filter language](https://cloud.google.com/pubsub/docs/filtering). If non-empty, then only `PubsubMessage`s whose `attributes` field matches the filter are delivered on this subscription. If empty, then no messages are filtered out.',
+        description="An expression written in the Pub/Sub [filter language](https://cloud.google.com/pubsub/docs/filtering). If non-empty, then only `PubsubMessage`s whose `attributes` field matches the filter are delivered on this subscription. If empty, then no messages are filtered out.",
     )
     detached: Optional[bool] = Field(
         None,
@@ -465,8 +457,8 @@ class Subscription(BaseModel):
     )
     enable_message_ordering: Optional[bool] = Field(
         None,
-        alias='enableMessageOrdering',
-        description='If true, messages published with the same `ordering_key` in `PubsubMessage` will be delivered to the subscribers in the order in which they are received by the Pub/Sub system. Otherwise, they may be delivered in any order.',
+        alias="enableMessageOrdering",
+        description="If true, messages published with the same `ordering_key` in `PubsubMessage` will be delivered to the subscribers in the order in which they are received by the Pub/Sub system. Otherwise, they may be delivered in any order.",
     )
     name: Optional[str] = Field(
         None,
@@ -474,188 +466,170 @@ class Subscription(BaseModel):
     )
     retry_policy: Optional[RetryPolicy] = Field(
         None,
-        alias='retryPolicy',
-        description='A policy that specifies how Pub/Sub retries message delivery for this subscription. If not set, the default retry policy is applied. This generally implies that messages will be retried as soon as possible for healthy subscribers. RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded events for a given message.',
+        alias="retryPolicy",
+        description="A policy that specifies how Pub/Sub retries message delivery for this subscription. If not set, the default retry policy is applied. This generally implies that messages will be retried as soon as possible for healthy subscribers. RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded events for a given message.",
     )
-    labels: Optional[Dict[str, str]] = Field(
-        None, description='See Creating and managing labels.'
-    )
+    labels: Optional[Dict[str, str]] = Field(None, description="See Creating and managing labels.")
     ack_deadline_seconds: Optional[int] = Field(
         None,
-        alias='ackDeadlineSeconds',
-        description='The approximate amount of time (on a best-effort basis) Pub/Sub waits for the subscriber to acknowledge receipt before resending the message. In the interval after the message is delivered and before it is acknowledged, it is considered to be *outstanding*. During that time period, the message will not be redelivered (on a best-effort basis). For pull subscriptions, this value is used as the initial value for the ack deadline. To override this value for a given message, call `ModifyAckDeadline` with the corresponding `ack_id` if using non-streaming pull or send the `ack_id` in a `StreamingModifyAckDeadlineRequest` if using streaming pull. The minimum custom deadline you can specify is 10 seconds. The maximum custom deadline you can specify is 600 seconds (10 minutes). If this parameter is 0, a default value of 10 seconds is used. For push delivery, this value is also used to set the request timeout for the call to the push endpoint. If the subscriber never acknowledges the message, the Pub/Sub system will eventually redeliver the message.',
+        alias="ackDeadlineSeconds",
+        description="The approximate amount of time (on a best-effort basis) Pub/Sub waits for the subscriber to acknowledge receipt before resending the message. In the interval after the message is delivered and before it is acknowledged, it is considered to be *outstanding*. During that time period, the message will not be redelivered (on a best-effort basis). For pull subscriptions, this value is used as the initial value for the ack deadline. To override this value for a given message, call `ModifyAckDeadline` with the corresponding `ack_id` if using non-streaming pull or send the `ack_id` in a `StreamingModifyAckDeadlineRequest` if using streaming pull. The minimum custom deadline you can specify is 10 seconds. The maximum custom deadline you can specify is 600 seconds (10 minutes). If this parameter is 0, a default value of 10 seconds is used. For push delivery, this value is also used to set the request timeout for the call to the push endpoint. If the subscriber never acknowledges the message, the Pub/Sub system will eventually redeliver the message.",
     )
 
 
 class UpdateSubscriptionRequest(BaseModel):
     update_mask: Optional[str] = Field(
         None,
-        alias='updateMask',
-        description='Required. Indicates which fields in the provided subscription to update. Must be specified and non-empty.',
+        alias="updateMask",
+        description="Required. Indicates which fields in the provided subscription to update. Must be specified and non-empty.",
     )
     subscription: Optional[Subscription] = Field(
-        None, description='Required. The updated subscription object.'
+        None, description="Required. The updated subscription object."
     )
 
 
 class ModifyPushConfigRequest(BaseModel):
     push_config: Optional[PushConfig] = Field(
         None,
-        alias='pushConfig',
-        description='Required. The push configuration for future deliveries. An empty `pushConfig` indicates that the Pub/Sub system should stop pushing messages from the given subscription and allow messages to be pulled and acknowledged - effectively pausing the subscription if `Pull` or `StreamingPull` is not called.',
+        alias="pushConfig",
+        description="Required. The push configuration for future deliveries. An empty `pushConfig` indicates that the Pub/Sub system should stop pushing messages from the given subscription and allow messages to be pulled and acknowledged - effectively pausing the subscription if `Pull` or `StreamingPull` is not called.",
     )
 
 
 class ListTopicsResponse(BaseModel):
-    topics: Optional[List[Topic]] = Field(None, description='The resulting topics.')
+    topics: Optional[List[Topic]] = Field(None, description="The resulting topics.")
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='If not empty, indicates that there may be more topics that match the request; this value should be passed in a new `ListTopicsRequest`.',
+        alias="nextPageToken",
+        description="If not empty, indicates that there may be more topics that match the request; this value should be passed in a new `ListTopicsRequest`.",
     )
 
 
 class ListSubscriptionsResponse(BaseModel):
     next_page_token: Optional[str] = Field(
         None,
-        alias='nextPageToken',
-        description='If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListSubscriptionsRequest` to get more subscriptions.',
+        alias="nextPageToken",
+        description="If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListSubscriptionsRequest` to get more subscriptions.",
     )
     subscriptions: Optional[List[Subscription]] = Field(
-        None, description='The subscriptions that match the request.'
+        None, description="The subscriptions that match the request."
     )
 
 
 class ReceivedMessage(BaseModel):
     delivery_attempt: Optional[int] = Field(
         None,
-        alias='deliveryAttempt',
-        description='The approximate number of times that Cloud Pub/Sub has attempted to deliver the associated message to a subscriber. More precisely, this is 1 + (number of NACKs) + (number of ack_deadline exceeds) for this message. A NACK is any call to ModifyAckDeadline with a 0 deadline. An ack_deadline exceeds event is whenever a message is not acknowledged within ack_deadline. Note that ack_deadline is initially Subscription.ackDeadlineSeconds, but may get extended automatically by the client library. Upon the first delivery of a given message, `delivery_attempt` will have a value of 1. The value is calculated at best effort and is approximate. If a DeadLetterPolicy is not set on the subscription, this will be 0.',
+        alias="deliveryAttempt",
+        description="The approximate number of times that Cloud Pub/Sub has attempted to deliver the associated message to a subscriber. More precisely, this is 1 + (number of NACKs) + (number of ack_deadline exceeds) for this message. A NACK is any call to ModifyAckDeadline with a 0 deadline. An ack_deadline exceeds event is whenever a message is not acknowledged within ack_deadline. Note that ack_deadline is initially Subscription.ackDeadlineSeconds, but may get extended automatically by the client library. Upon the first delivery of a given message, `delivery_attempt` will have a value of 1. The value is calculated at best effort and is approximate. If a DeadLetterPolicy is not set on the subscription, this will be 0.",
     )
-    message: Optional[PubsubMessage] = Field(None, description='The message.')
+    message: Optional[PubsubMessage] = Field(None, description="The message.")
     ack_id: Optional[str] = Field(
         None,
-        alias='ackId',
-        description='This ID can be used to acknowledge the received message.',
+        alias="ackId",
+        description="This ID can be used to acknowledge the received message.",
     )
 
 
 class SetIamPolicyRequest(BaseModel):
     policy: Optional[Policy] = Field(
         None,
-        description='REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud Platform services (such as Projects) might reject them.',
+        description="REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud Platform services (such as Projects) might reject them.",
     )
 
 
 class PullResponse(BaseModel):
     received_messages: Optional[List[ReceivedMessage]] = Field(
         None,
-        alias='receivedMessages',
-        description='Received Pub/Sub messages. The list will be empty if there are no more messages available in the backlog. For JSON, the response can be entirely empty. The Pub/Sub system may return fewer than the `maxMessages` requested even if there are more messages available in the backlog.',
+        alias="receivedMessages",
+        description="Received Pub/Sub messages. The list will be empty if there are no more messages available in the backlog. For JSON, the response can be entirely empty. The Pub/Sub system may return fewer than the `maxMessages` requested even if there are more messages available in the backlog.",
     )
 
 
 class UpdateTopicRequest(BaseModel):
     update_mask: Optional[str] = Field(
         None,
-        alias='updateMask',
+        alias="updateMask",
         description='Required. Indicates which fields in the provided topic to update. Must be specified and non-empty. Note that if `update_mask` contains "message_storage_policy" but the `message_storage_policy` is not set in the `topic` provided above, then the updated value is determined by the policy configured at the project or organization level.',
     )
-    topic: Optional[Topic] = Field(
-        None, description='Required. The updated topic object.'
-    )
+    topic: Optional[Topic] = Field(None, description="Required. The updated topic object.")
 
 
 class Model(BaseModel):
-    update_topic_request: Optional[UpdateTopicRequest] = Field(
-        None, alias='UpdateTopicRequest'
-    )
-    pull_request: Optional[PullRequest] = Field(None, alias='PullRequest')
-    push_config: Optional[PushConfig] = Field(None, alias='PushConfig')
-    expr: Optional[Expr] = Field(None, alias='Expr')
+    update_topic_request: Optional[UpdateTopicRequest] = Field(None, alias="UpdateTopicRequest")
+    pull_request: Optional[PullRequest] = Field(None, alias="PullRequest")
+    push_config: Optional[PushConfig] = Field(None, alias="PushConfig")
+    expr: Optional[Expr] = Field(None, alias="Expr")
     update_snapshot_request: Optional[UpdateSnapshotRequest] = Field(
-        None, alias='UpdateSnapshotRequest'
+        None, alias="UpdateSnapshotRequest"
     )
-    topic: Optional[Topic] = Field(None, alias='Topic')
+    topic: Optional[Topic] = Field(None, alias="Topic")
     validate_schema_request: Optional[ValidateSchemaRequest] = Field(
-        None, alias='ValidateSchemaRequest'
+        None, alias="ValidateSchemaRequest"
     )
     list_snapshots_response: Optional[ListSnapshotsResponse] = Field(
-        None, alias='ListSnapshotsResponse'
+        None, alias="ListSnapshotsResponse"
     )
-    dead_letter_policy: Optional[DeadLetterPolicy] = Field(
-        None, alias='DeadLetterPolicy'
-    )
+    dead_letter_policy: Optional[DeadLetterPolicy] = Field(None, alias="DeadLetterPolicy")
     detach_subscription_response: Optional[DetachSubscriptionResponse] = Field(
-        None, alias='DetachSubscriptionResponse'
+        None, alias="DetachSubscriptionResponse"
     )
     test_iam_permissions_response: Optional[TestIamPermissionsResponse] = Field(
-        None, alias='TestIamPermissionsResponse'
+        None, alias="TestIamPermissionsResponse"
     )
-    subscription: Optional[Subscription] = Field(None, alias='Subscription')
+    subscription: Optional[Subscription] = Field(None, alias="Subscription")
     update_subscription_request: Optional[UpdateSubscriptionRequest] = Field(
-        None, alias='UpdateSubscriptionRequest'
+        None, alias="UpdateSubscriptionRequest"
     )
-    seek_request: Optional[SeekRequest] = Field(None, alias='SeekRequest')
-    acknowledge_request: Optional[AcknowledgeRequest] = Field(
-        None, alias='AcknowledgeRequest'
-    )
+    seek_request: Optional[SeekRequest] = Field(None, alias="SeekRequest")
+    acknowledge_request: Optional[AcknowledgeRequest] = Field(None, alias="AcknowledgeRequest")
     validate_message_response: Optional[ValidateMessageResponse] = Field(
-        None, alias='ValidateMessageResponse'
+        None, alias="ValidateMessageResponse"
     )
-    binding: Optional[Binding] = Field(None, alias='Binding')
-    empty: Optional[Empty] = Field(None, alias='Empty')
+    binding: Optional[Binding] = Field(None, alias="Binding")
+    empty: Optional[Empty] = Field(None, alias="Empty")
     validate_message_request: Optional[ValidateMessageRequest] = Field(
-        None, alias='ValidateMessageRequest'
+        None, alias="ValidateMessageRequest"
     )
     validate_schema_response: Optional[ValidateSchemaResponse] = Field(
-        None, alias='ValidateSchemaResponse'
+        None, alias="ValidateSchemaResponse"
     )
     modify_ack_deadline_request: Optional[ModifyAckDeadlineRequest] = Field(
-        None, alias='ModifyAckDeadlineRequest'
+        None, alias="ModifyAckDeadlineRequest"
     )
     modify_push_config_request: Optional[ModifyPushConfigRequest] = Field(
-        None, alias='ModifyPushConfigRequest'
+        None, alias="ModifyPushConfigRequest"
     )
     list_topic_snapshots_response: Optional[ListTopicSnapshotsResponse] = Field(
-        None, alias='ListTopicSnapshotsResponse'
+        None, alias="ListTopicSnapshotsResponse"
     )
-    expiration_policy: Optional[ExpirationPolicy] = Field(
-        None, alias='ExpirationPolicy'
-    )
-    seek_response: Optional[SeekResponse] = Field(None, alias='SeekResponse')
-    list_schemas_response: Optional[ListSchemasResponse] = Field(
-        None, alias='ListSchemasResponse'
-    )
-    list_topics_response: Optional[ListTopicsResponse] = Field(
-        None, alias='ListTopicsResponse'
-    )
+    expiration_policy: Optional[ExpirationPolicy] = Field(None, alias="ExpirationPolicy")
+    seek_response: Optional[SeekResponse] = Field(None, alias="SeekResponse")
+    list_schemas_response: Optional[ListSchemasResponse] = Field(None, alias="ListSchemasResponse")
+    list_topics_response: Optional[ListTopicsResponse] = Field(None, alias="ListTopicsResponse")
     list_subscriptions_response: Optional[ListSubscriptionsResponse] = Field(
-        None, alias='ListSubscriptionsResponse'
+        None, alias="ListSubscriptionsResponse"
     )
     create_snapshot_request: Optional[CreateSnapshotRequest] = Field(
-        None, alias='CreateSnapshotRequest'
+        None, alias="CreateSnapshotRequest"
     )
-    retry_policy: Optional[RetryPolicy] = Field(None, alias='RetryPolicy')
+    retry_policy: Optional[RetryPolicy] = Field(None, alias="RetryPolicy")
     list_topic_subscriptions_response: Optional[ListTopicSubscriptionsResponse] = Field(
-        None, alias='ListTopicSubscriptionsResponse'
+        None, alias="ListTopicSubscriptionsResponse"
     )
-    received_message: Optional[ReceivedMessage] = Field(None, alias='ReceivedMessage')
-    oidc_token: Optional[OidcToken] = Field(None, alias='OidcToken')
-    set_iam_policy_request: Optional[SetIamPolicyRequest] = Field(
-        None, alias='SetIamPolicyRequest'
-    )
-    policy: Optional[Policy] = Field(None, alias='Policy')
+    received_message: Optional[ReceivedMessage] = Field(None, alias="ReceivedMessage")
+    oidc_token: Optional[OidcToken] = Field(None, alias="OidcToken")
+    set_iam_policy_request: Optional[SetIamPolicyRequest] = Field(None, alias="SetIamPolicyRequest")
+    policy: Optional[Policy] = Field(None, alias="Policy")
     test_iam_permissions_request: Optional[TestIamPermissionsRequest] = Field(
-        None, alias='TestIamPermissionsRequest'
+        None, alias="TestIamPermissionsRequest"
     )
-    schema_settings: Optional[SchemaSettings] = Field(None, alias='SchemaSettings')
-    pull_response: Optional[PullResponse] = Field(None, alias='PullResponse')
+    schema_settings: Optional[SchemaSettings] = Field(None, alias="SchemaSettings")
+    pull_response: Optional[PullResponse] = Field(None, alias="PullResponse")
     message_storage_policy: Optional[MessageStoragePolicy] = Field(
-        None, alias='MessageStoragePolicy'
+        None, alias="MessageStoragePolicy"
     )
-    schema_: Optional[Schema] = Field(None, alias='Schema')
-    pubsub_message: Optional[PubsubMessage] = Field(None, alias='PubsubMessage')
-    publish_response: Optional[PublishResponse] = Field(None, alias='PublishResponse')
-    snapshot: Optional[Snapshot] = Field(None, alias='Snapshot')
-    publish_request: Optional[PublishRequest] = Field(None, alias='PublishRequest')
+    schema_: Optional[Schema] = Field(None, alias="Schema")
+    pubsub_message: Optional[PubsubMessage] = Field(None, alias="PubsubMessage")
+    publish_response: Optional[PublishResponse] = Field(None, alias="PublishResponse")
+    snapshot: Optional[Snapshot] = Field(None, alias="Snapshot")
+    publish_request: Optional[PublishRequest] = Field(None, alias="PublishRequest")

@@ -1,14 +1,14 @@
 import enum
 from dataclasses import dataclass
-from typing import Any, List, Set, NewType, Optional
+from typing import Any, List, NewType, Optional, Set
 
 from ..cache import Cache, with_cache
 from . import api
-
 from .types import Policy
 
 # These classes are used to assist with deserialization of GCP project resources.
 # TODO - unify this with the other dataclasses we're autogenerating.
+
 
 class LifecycleState(enum.Enum):
     """
@@ -91,9 +91,13 @@ def _parse(raw: dict) -> Project:
         parent,
     )
 
+
 @with_cache("iam", "project")
 def __get_iam_policy(project_id: str):
-    return api.projects.getIamPolicy(resource=project_id, body={"options": {"requestedPolicyVersion": 3}}).execute()
+    return api.projects.getIamPolicy(
+        resource=project_id, body={"options": {"requestedPolicyVersion": 3}}
+    ).execute()
+
 
 def get_iam_policy(project_id: str, cache: Cache) -> Policy:
     raw_iam_policy = __get_iam_policy(cache, project_id)
@@ -120,4 +124,3 @@ def test_permissions(project_id: str, permissions: Set[str]) -> Set[str]:
     missing_permissions = permissions - actual_permissions
 
     return missing_permissions
-

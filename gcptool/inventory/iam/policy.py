@@ -1,6 +1,6 @@
 import dataclasses
-
 from typing import List, Optional
+
 
 @dataclasses.dataclass
 class Expr:
@@ -9,11 +9,15 @@ class Expr:
     description: Optional[str]
     location: Optional[str]
 
+
 @dataclasses.dataclass
 class Binding:
     role: str
     members: List[str]
+
+
 #    condition: Expr
+
 
 @dataclasses.dataclass
 class Policy:

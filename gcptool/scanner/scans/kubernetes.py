@@ -28,10 +28,13 @@ class PubliclyAccessibleClusters(Scan):
             project_clusters = clusters.list(project.id, context.cache)
 
             for cluster in project_clusters:
-                
+
                 # If this exists, this is a Google-managed cluster.
                 # (Cloud Composer)
-                if cluster.resource_labels and 'goog-composer-environment' in cluster.resource_labels.keys():
+                if (
+                    cluster.resource_labels
+                    and "goog-composer-environment" in cluster.resource_labels.keys()
+                ):
                     continue
 
                 # Even if we don't have master-authorized-networks,
@@ -81,7 +84,10 @@ class EnforceWorkloadIdentity(Scan):
                 # If this exists, this is a Google-managed cluster.
                 # (Cloud Composer)
                 # (Google, why are you doing this?)
-                if cluster.resource_labels and 'goog-composer-environment' in cluster.resource_labels.keys():
+                if (
+                    cluster.resource_labels
+                    and "goog-composer-environment" in cluster.resource_labels.keys()
+                ):
                     continue
 
                 # We're looking for clusters without Workload Identity
@@ -91,28 +97,31 @@ class EnforceWorkloadIdentity(Scan):
                 for node_pool in cluster.node_pools:
                     config = node_pool.config
                     # These correspond to "Allow Full Access to Google APIs"
-                    if 'https://www.googleapis.com/auth/any-api' in config.oauth_scopes:
+                    if "https://www.googleapis.com/auth/any-api" in config.oauth_scopes:
                         high_privilege_account = config["serviceAccount"]
-                    elif 'https://www.googleapis.com/auth/cloud-platform' in config.oauth_scopes:
+                    elif "https://www.googleapis.com/auth/cloud-platform" in config.oauth_scopes:
                         high_privilege_account = config["serviceAccount"]
 
                 if not cluster.workload_identity_config:
                     vulnerable_clusters.append(cluster)
 
                     if high_privilege_account:
-                        if high_privilege_account == 'default':
-                            high_privilege_account = 'Compute Engine Default'
+                        if high_privilege_account == "default":
+                            high_privilege_account = "Compute Engine Default"
                         service_accounts[cluster.name] = high_privilege_account
                         high_risk_clusters.append(cluster)
 
-
             if len(vulnerable_clusters):
-                vulnerable_projects[project.id] = {"all": vulnerable_clusters, "high_privilege": high_risk_clusters}
+                vulnerable_projects[project.id] = {
+                    "all": vulnerable_clusters,
+                    "high_privilege": high_risk_clusters,
+                }
 
         if len(vulnerable_projects) != 0:
             return self.finding(instances=vulnerable_projects, service_accounts=service_accounts)
 
         return None
+
 
 @scan
 class MiscellaneousHardeningSettings(Scan):
@@ -123,7 +132,7 @@ class MiscellaneousHardeningSettings(Scan):
             "hardening",
             "Kubernetes Engine clusters do not use recommended hardening configuration",
             Severity.LOW,
-            ["roles/iam.securityReviewer"]
+            ["roles/iam.securityReviewer"],
         )
 
     def run(self, context: Context) -> Optional[Finding]:
@@ -140,7 +149,10 @@ class MiscellaneousHardeningSettings(Scan):
 
                 # If this exists, this is a Google-managed cluster.
                 # (Cloud Composer)
-                if cluster.resource_labels and 'goog-composer-environment' in cluster.resource_labels.keys():
+                if (
+                    cluster.resource_labels
+                    and "goog-composer-environment" in cluster.resource_labels.keys()
+                ):
                     continue
 
                 if cluster.legacy_abac.enabled:
@@ -149,7 +161,10 @@ class MiscellaneousHardeningSettings(Scan):
                 if cluster.master_auth.username and cluster.master_auth.password:
                     basic_auth.append(cluster.name)
 
-                if not cluster.pod_security_policy_config or not cluster.pod_security_policy_config.enabled:
+                if (
+                    not cluster.pod_security_policy_config
+                    or not cluster.pod_security_policy_config.enabled
+                ):
                     pod_security_policy.append(cluster.name)
 
                 if not cluster.network_policy or not cluster.network_policy.enabled:
@@ -157,8 +172,12 @@ class MiscellaneousHardeningSettings(Scan):
                     network_policy.append(cluster.name)
 
             if basic_auth or legacy_auth or pod_security_policy or network_policy:
-                vuln_projects[project.id] = {"basic": basic_auth, "legacy": legacy_auth, "psp": pod_security_policy, "net": network_policy}
+                vuln_projects[project.id] = {
+                    "basic": basic_auth,
+                    "legacy": legacy_auth,
+                    "psp": pod_security_policy,
+                    "net": network_policy,
+                }
 
         if vuln_projects:
             return self.finding(instances=vuln_projects)
-                
