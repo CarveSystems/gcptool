@@ -1,13 +1,10 @@
 variables:
   GIT_SSL_NO_VERIFY: "true"
 
-build:
-  tags:
-    - python3
+image: python:latest
+
+run:
   script:
-    - python ./setup.py bdist_wheel
-  artifacts:
-    paths:
-      - dist
-  only:
-    - master
+    - pip install twine build
+    - python -m build
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
