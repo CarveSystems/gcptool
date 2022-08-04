@@ -17,5 +17,5 @@ The following buckets were world writable:
 
 {% endblock %}
 {% block recommendation %}
-We can put in some recommendation text here.
+Review the list of buckets that have been exposed to the public. Disable this access in any case where it is unnecessary.
 {% endblock %}

@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+from collections import defaultdict
 from pathlib import Path
 
 from .inventory.cache import Cache
@@ -9,6 +10,7 @@ from .scanner import Scanner
 from .scanner.context import Context
 from .scanner.finding import Severity
 from .scanner.output import write_findings
+from .scanner.scan import all_scans
 
 
 def scan(args):
@@ -27,8 +29,11 @@ def scan(args):
 
     context = Context(to_scan, cache)
 
+    services = set(args.service.split(",")) if args.service else None
+    scans = set(args.scan.split(",")) if args.scan else None
+
     scanner = Scanner(context)
-    findings = scanner.scan()
+    findings = scanner.scan(services, scans)
 
     num_high_findings = sum(1 for finding in findings if finding.severity >= Severity.HIGH)
 
@@ -66,6 +71,22 @@ def list_projects(_args):
         print(f"|{project.id}|{project.name}|{project.number}|")
 
 
+def list_scans(args):
+    service_scans = defaultdict(list)
+
+    for scanner in all_scans:
+        meta = scanner.meta()
+
+        service_scans[meta.service].append(meta)
+
+    for service, scans in service_scans.items():
+        print(f"{service}")
+        for scan in scans:
+            print(f"  {scan.name}: {scan.title}")
+
+        print()
+
+
 parser = argparse.ArgumentParser(prog="gcptool")
 
 subparsers = parser.add_subparsers(dest="command", required=True)
@@ -77,6 +98,15 @@ parser_projects.set_defaults(func=list_projects)
 parser_scan = subparsers.add_parser("scan", help="Scan a given project")
 parser_scan.add_argument("project", help="Project to scan.")
 parser_scan.add_argument("output", help="Folder to write generated findings to.", type=Path)
+parser_scan.add_argument(
+    "--service",
+    help="Comma separated list of services to scan. Defaults to all enabled.",
+    default=None,
+)
+parser_scan.add_argument(
+    "--scan", help="Comma separated list of scans to run. Defaults to running all enabled scans."
+)
+
 parser_scan.add_argument(
     "--cache",
     help="File to write cached API data to.",
@@ -102,6 +132,9 @@ parser_check.add_argument(
     default=Path(os.getcwd()) / "gcptool_cache.json",
 )
 parser_check.set_defaults(func=permissions_check)
+
+parser_list = subparsers.add_parser("list-scans", help="List all available scans.")
+parser_list.set_defaults(func=list_scans)
 
 
 def main():

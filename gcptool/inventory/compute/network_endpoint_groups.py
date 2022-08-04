@@ -8,16 +8,20 @@ from .types import NetworkEndpointGroup
 
 @with_cache("compute", "network_endpoint_groups")
 def __all(project_id: str):
-    network_endpoint_groups = {}
-    # TODO - we have no reference to the cache here, and so can't use
-    ##for zone in zones.all(project_id, cache):
-    for zone in api.zones.list(project=project_id).execute().get("items", []):
-        zone_network_endpoint_groups = (
-            api.network_endpoint_groups.list(project=project_id, zone=zone["name"])
-            .execute()
-            .get("items", [])
+    network_endpoint_groups = []
+
+    request = api.network_endpoint_groups.aggregatedList(project=project_id)
+
+    while request is not None:
+        response = request.execute()
+
+        for region_data in response.get("items").values():
+            for network_endpoint_group in region_data.get("networkEndpointGroups", []):
+                network_endpoint_groups.append(network_endpoint_group)
+
+        request = api.network_endpoint_groups.aggregatedList_next(
+            previous_request=request, previous_response=response
         )
-        network_endpoint_groups[zone["name"]] = zone_network_endpoint_groups
 
     return network_endpoint_groups
 
@@ -26,17 +30,5 @@ def __all(project_id: str):
 def all(project_id: str, cache: Cache) -> List[NetworkEndpointGroup]:
     return [
         NetworkEndpointGroup(**network_endpoint_group)
-        for by_zone in __all(cache, project_id).values()
-        for network_endpoint_group in by_zone
+        for network_endpoint_group in __all(cache, project_id)
     ]
-
-
-# nested lists of all network_endpoint_groups in project, by zone
-def by_zone(project_id: str, cache: Cache) -> Dict[str, List[NetworkEndpointGroup]]:
-    network_endpoint_groups = {}
-    for zone, zone_network_endpoint_groups in __all(cache, project_id).items():
-        network_endpoint_groups[zone] = [
-            NetworkEndpointGroup(**network_endpoint_group)
-            for network_endpoint_group in zone_network_endpoint_groups
-        ]
-    return network_endpoint_groups

@@ -1,3 +1,4 @@
+import functools
 import json
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
@@ -31,8 +32,15 @@ class Cache:
         Write the cache to disk.
         """
 
-        with self.filename.open("w") as f:
+        # We don't want to accidentally leave a half-written file in place,
+        # so write out to a temporary file and then replace the good one.
+
+        tmp_filename = self.filename.with_suffix(".tmp")
+
+        with tmp_filename.open("w") as f:
             json.dump(self.data, f, indent=2)
+
+        tmp_filename.replace(self.filename)
 
     def get(self, service: str, resource: str, project: str) -> Optional[Any]:
         service_data = self.data.get(service)
@@ -88,3 +96,17 @@ def with_cache(
         return wrapper_func
 
     return decorator
+
+
+_simple_cache = {}
+
+
+def parse_model_cache(data: Any, model: Any) -> Any:
+    # TODO -> LRU
+    name = data["name"]
+    if name in _simple_cache:
+        return _simple_cache[name]
+    else:
+        obj = model(**data)
+        _simple_cache[name] = obj
+        return obj

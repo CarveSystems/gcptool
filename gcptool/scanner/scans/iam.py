@@ -1,6 +1,8 @@
 import datetime
 from typing import Dict, List, Optional
 
+from grpc import ServerInterceptor
+
 from gcptool.inventory.iam import service_accounts
 from gcptool.inventory.pubsub import topics
 from gcptool.inventory.resourcemanager import projects
@@ -8,6 +10,27 @@ from gcptool.inventory.resourcemanager import projects
 from ..context import Context
 from ..finding import Finding, Severity
 from ..scan import Scan, ScanMetadata, scan
+
+
+@scan
+class IAMInventory(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "iam",
+            "inventory",
+            "Inventory of IAM resources",
+            Severity.INFO,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        for project in context.projects:
+            policies = projects.get_iam_policy(project.id, context.cache)
+            sas = service_accounts.list(project.id, context.cache)
+            for sa in sas:
+                keys = service_accounts.list_keys(sa, context.cache)
 
 
 @scan

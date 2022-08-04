@@ -8,6 +8,26 @@ from ..scan import Scan, ScanMetadata, scan
 
 
 @scan
+class ContainerInventory(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "gke",
+            "inventory",
+            "Inventory of Kubernetes Engine resources",
+            Severity.INFO,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        for project in context.projects:
+            project_clusters = clusters.list(project.id, context.cache)
+
+            # TODO - nodepools
+
+
+@scan
 class PubliclyAccessibleClusters(Scan):
     @staticmethod
     def meta():

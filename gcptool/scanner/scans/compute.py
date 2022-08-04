@@ -47,7 +47,6 @@ class ComputeInventory(Scan):
             target_ssl_proxies = compute.target_ssl_proxies.all(project.id, context.cache)
             target_tcp_proxies = compute.target_tcp_proxies.all(project.id, context.cache)
 
-        # TODO an actual finding, if we want one
         return None
 
 
@@ -57,7 +56,7 @@ class IPAddressDump(Scan):
     def meta():
         return ScanMetadata(
             "compute",
-            "esm",
+            "allspotter",
             "Inventory of IP addresses",
             Severity.INFO,
             ["roles/iam.securityReviewer"],

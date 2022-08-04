@@ -6,11 +6,11 @@
 
 {% for project in instances %}
   {% for function in instances[project] %}
-- {{ function }}
+- {{ function.name }}: {{ function.https_trigger.url }}
   {% endfor %}
 {% endfor %}
 
 {% endblock %}
 {% block recommendation %}
-We can put in some recommendation text here.
+Review the list of triggerable functions. Ensure that none of them expose sensitive functionality without authentication.
 {% endblock %}

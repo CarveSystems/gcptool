@@ -3,15 +3,7 @@ from typing import Any, List, Optional, Set
 
 from ..cache import Cache, with_cache
 from . import api
-
-
-@dataclass
-class Role:
-    name: str
-    title: Optional[str]
-    description: Optional[str]
-    included_permissions: Set[str]
-    deleted: bool
+from .types import Role
 
 
 @with_cache("iam", "grantable_roles")
@@ -36,15 +28,7 @@ def grantable_roles(resource: str, cache: Cache) -> List[Role]:
     parsed_roles: List[Role] = []
 
     for role in roles:
-        parsed_roles.append(
-            Role(
-                role["name"],
-                role.get("title"),
-                role.get("description"),
-                set(role.get("includedPermissions", [])),
-                role.get("deleted", False),
-            )
-        )
+        parsed_roles.append(Role(**role))
 
     return parsed_roles
 

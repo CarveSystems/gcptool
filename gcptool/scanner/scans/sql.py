@@ -1,9 +1,30 @@
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from gcptool.inventory.sql import instances, users
 from gcptool.scanner.context import Context
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
+
+
+@scan
+class SQLInventory(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "sql",
+            "inventory",
+            "Inventory of Cloud SQL resources",
+            Severity.INFO,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        for project in context.projects:
+            servers = instances.all(project.id, context.cache)
+
+            for server in servers:
+                u = users.all(project.id, server.id, context.cache)
 
 
 @scan

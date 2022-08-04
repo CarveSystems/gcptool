@@ -1,10 +1,28 @@
-from typing import Any, List, Optional
+import logging
+from typing import List, Optional
 
-from gcptool.inventory.compute.types import Op
 from gcptool.inventory.storage import buckets
 from gcptool.scanner.context import Context
 from gcptool.scanner.finding import Finding, Severity
 from gcptool.scanner.scan import Scan, ScanMetadata, scan
+
+
+@scan
+class CloudStorageInventory(Scan):
+    @staticmethod
+    def meta() -> ScanMetadata:
+        return ScanMetadata(
+            "gcs",
+            "inventory",
+            "Inventory of Cloud Storage Buckets",
+            Severity.INFO,
+            ["roles/iam.securityReviewer"],
+        )
+
+    def run(self, context: Context) -> Optional[Finding]:
+
+        for project in context.projects:
+            _ = buckets.all(project.id, context.cache)
 
 
 @scan
@@ -24,7 +42,6 @@ class PubliclyWriteableBuckets(Scan):
         )
 
     def run(self, context: Context) -> Optional[Finding]:
-        return
         all_buckets = []
 
         for project in context.projects:
@@ -67,9 +84,6 @@ class PubliclyWriteableBuckets(Scan):
 
                 for entity in granted_entities:
                     if entity.type in public_entities:
-                        print(
-                            f"!! found ACL granting {entity.roles} of type {entity.type} on {bucket.id}"
-                        )
 
                         if "WRITER" in entity.roles:
                             writable = True
@@ -84,7 +98,9 @@ class PubliclyWriteableBuckets(Scan):
                     public_policy = len(binding["members"] & public_entities) > 0
 
                     if public_policy:
-                        logging.debug(f"! found public IAM policy {binding} for bucket {bucket.id}")
+                        logging.warning(
+                            f"! found public IAM policy {binding} for bucket {bucket.id}"
+                        )
 
                         # Check to see what this role gives us...
                         # TODO - we should check to see what permissions this role actually gives us.

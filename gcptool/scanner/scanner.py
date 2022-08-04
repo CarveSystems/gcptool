@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
 
 import google.api_core.exceptions as gcperrors
 
@@ -18,7 +18,9 @@ class Scanner:
         self.findings: List[Finding] = []
         self.context = context
 
-    def scan(self) -> List[Finding]:
+    def scan(
+        self, enabled_services: Optional[Set[str]], enabled_scans: Optional[Set[str]]
+    ) -> List[Finding]:
 
         logging.info("Scanner: Beginning scan")
 
@@ -33,17 +35,26 @@ class Scanner:
 
                 dirty_projects = []
 
+                if enabled_services and meta.service not in enabled_services:
+                    # Skip
+                    continue
+
+                if enabled_scans and meta.name not in enabled_scans:
+                    # Skip
+                    continue
+
                 # skip checking IAM (which always works)
                 if meta.service != "iam":
                     for project in self.context.projects:
 
                         try:
                             project_services = services.all(project.number, self.context.cache)
-                        except:
+                        except Exception as e:
                             # we seem to get rate-limited here ...
                             logging.warning(
-                                f"failed to get list of servicesfor {project.number}, assuming all enabled"
+                                f"failed to get list of services for {project.number}, assuming all enabled"
                             )
+                            logging.warning(str(e))
                             continue
 
                         mapped_name = services.Mapping.get(meta.service, meta.service)
@@ -105,7 +116,7 @@ class Scanner:
 
                 # If we've declared a role in our list of permissions, replace it with all of its permissions.
                 if permission in all_roles:
-                    required_permissions |= all_roles[permission].included_permissions
+                    required_permissions |= set(all_roles[permission].included_permissions)
                 else:
                     required_permissions.add(permission)
 
@@ -138,7 +149,7 @@ class Scanner:
                     f"Cannot run scan {meta.service}:{meta.name} due to failed permissions check."
                 )
             else:
-                logging.info(f"Permissions check succeeded for {meta.service}:{meta.name}!")
+                print(f"Permissions check succeeded for {meta.service}:{meta.name}!")
 
         self.context.cache.save()
 
