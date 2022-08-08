@@ -3,7 +3,9 @@ variables:
 
 image: python:latest
 
-run:
+build:
+  tags:
+    - python310
   script:
     - pip install twine build
     - python -m build
