@@ -5,7 +5,7 @@ image: python:latest
 
 build:
   tags:
-    - python310
+    - docker
   script:
     - pip install twine build
     - python -m build
