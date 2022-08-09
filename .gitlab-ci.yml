@@ -4,9 +4,11 @@ variables:
 image: python:latest
 
 build:
+  artifacts:
+    paths:
+      - dist
   tags:
     - docker
   script:
-    - pip install twine build
+    - pip install build
     - python -m build
-    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
