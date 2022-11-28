@@ -1,4 +1,4 @@
-# Carve Systems GCP Assessment Tooling (Name TBD)
+# Carve Systems GCP Assessment Tooling
 
 ## Installation
 
