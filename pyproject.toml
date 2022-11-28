@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 [project]
 name = "gcptool"
 readme = "README.md"
-license = ""
+license = "MIT"
 requires-python = ">=3.8"
 authors = [
     { name = "Aidan Noll", email = "aidan.noll@carvesystems.com" },
@@ -24,6 +24,9 @@ dependencies = [
 dynamic = [
     "version",
 ]
+
+[project.urls]
+GitHub = "https://github.com/CarveSystems/gcptool"
 
 [project.scripts]
 gcptool = "gcptool.__main__:main"
@@ -47,6 +50,7 @@ target-version = [
     "py38",
     "py39",
     "py310",
+    "py311"
 ]
 
 [tool.isort]
