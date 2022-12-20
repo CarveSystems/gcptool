@@ -1,4 +1,5 @@
 import logging
+import sys
 from typing import Any, Dict, List, Optional, Set
 
 import google.api_core.exceptions as gcperrors
@@ -18,9 +19,58 @@ class Scanner:
         self.findings: List[Finding] = []
         self.context = context
 
+    def check_scans(
+        self, requested_services: Optional[Set[str]], requested_scans: Optional[Set[str]]
+    ):
+
+        enabled_scans = all_scans[::]
+
+        if requested_services:
+            found_services = set()
+
+            for scan in all_scans:
+
+                if scan.meta().service not in requested_services:
+                    enabled_scans.remove(scan)
+                    continue
+
+                found_services.add(scan.meta().service)
+
+            if len(found_services) != len(requested_services):
+                missing_services = requested_services - found_services
+
+                print(f"Scanner: The following unknown services were specified: {missing_services}")
+                return False
+
+        if requested_scans:
+            found_scans = set()
+
+            for scan in enabled_scans:
+
+                if scan.meta().name not in requested_scans:
+                    enabled_scans.remove(scan)
+                    continue
+
+                found_scans.add(scan.meta().name)
+
+            if len(found_scans) != len(requested_scans):
+                missing_scans = requested_scans - found_scans
+                print(f"Scanner: The following unknown scans were specified: {missing_scans}")
+                return False
+
+        return True
+
     def scan(
         self, enabled_services: Optional[Set[str]], enabled_scans: Optional[Set[str]]
     ) -> List[Finding]:
+
+        if not self.check_scans(enabled_services, enabled_scans):
+            print(
+                "A list of available scans and services can found by running  `gcptool list-scans`."
+            )
+            print("Aborting...")
+            sys.exit(1)
+            return []
 
         logging.info("Scanner: Beginning scan")
 
@@ -48,7 +98,9 @@ class Scanner:
                     for project in self.context.projects:
 
                         try:
-                            project_services = services.all(project.number, self.context.cache)
+                            project_services = services.all_enabled(
+                                project.number, self.context.cache
+                            )
                         except Exception as e:
                             # we seem to get rate-limited here ...
                             logging.warning(

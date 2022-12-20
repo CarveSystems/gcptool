@@ -18,7 +18,21 @@ def scan(args):
     cache = Cache(args.cache, args.cache_only)
 
     # Take the list of projects to scan from the command line as a comma-separated list of project IDs.
-    to_scan = [projects.get(cache, project_id) for project_id in args.project.split(",")]
+    to_scan = []
+    for project_id in args.project.split(","):
+        try:
+            project = projects.get(cache, project_id)
+            to_scan.append(project)
+        except Exception as e:
+            # We can't get this project. Probably the wrong name has been specified.
+            # Bail out so that this doesn't get missed.
+            print(
+                f"Could not find project '{project_id}'. Was the right project ID specified, and do you have permissions?"
+            )
+            print(
+                'Check the first column of the output of "gcptool list-projects" to find the correct project ID.'
+            )
+            return
 
     # Let's just make sure we're able to output first...
     out: Path = args.output

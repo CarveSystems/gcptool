@@ -33,7 +33,7 @@ gcptool will use the generated cache file when possible to avoid making extraneo
 
 Other useful arguments are:
 
-- `--service`: only run scans for a specific GCP service. For example, `--scan compute` will only run Compute Engine tests.
+- `--service`: only run scans for a specific GCP service. For example, `--service compute` will only run Compute Engine tests.
 - `--scan`: only run a specific scan. One particularly useful use for this argument is `--scan inventory`, which will gather data or a complete cache file but will not run any analysis. (`gcptool list-scans` provides a helpful list of scans and services)
 
 ## Development
