@@ -180,6 +180,7 @@ class VersioningDisabledBuckets(Scan):
         for project in context.projects:
 
             for bucket in buckets.all(project.id, context.cache):
+                total_buckets += 1
 
                 if not bucket.versioning_enabled:
                     version_disabled_buckets.append(bucket.id)
